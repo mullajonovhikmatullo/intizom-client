@@ -6,8 +6,8 @@ export interface User {
   email: string;
 }
 
-const AUTH_KEY = "auth_user";
-export const TOKEN_KEY = "auth_token";
+const AUTH_KEY = import.meta.env.VITE_AUTH_USER_KEY ?? "auth_user";
+export const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY ?? "auth_token";
 
 interface AuthResponse {
   user: User;

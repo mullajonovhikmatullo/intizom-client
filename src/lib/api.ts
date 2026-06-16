@@ -1,5 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api/v1";
-const TOKEN_KEY = "auth_token";
+const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY ?? "auth_token";
 
 interface ApiErrorBody {
   error?: {
