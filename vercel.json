@@ -1,8 +1,28 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://intizom-server.onrender.com/:path*"
+      "source": "/auth/:path*",
+      "destination": "https://intizom-server.onrender.com/auth/:path*"
+    },
+    {
+      "source": "/todos/:path*",
+      "destination": "https://intizom-server.onrender.com/todos/:path*"
+    },
+    {
+      "source": "/debts/:path*",
+      "destination": "https://intizom-server.onrender.com/debts/:path*"
+    },
+    {
+      "source": "/expenses/:path*",
+      "destination": "https://intizom-server.onrender.com/expenses/:path*"
+    },
+    {
+      "source": "/loans/:path*",
+      "destination": "https://intizom-server.onrender.com/loans/:path*"
+    },
+    {
+      "source": "/habits/:path*",
+      "destination": "https://intizom-server.onrender.com/habits/:path*"
     }
   ]
 }

@@ -1,14 +1,16 @@
 const DEFAULT_BASE_URL = import.meta.env.DEV
   ? "http://localhost:4000"
-  : "/api";
+  : "";
 
 function trimTrailingSlash(value: string) {
   return value.replace(/\/+$/, "");
 }
 
-const API_BASE_URL = trimTrailingSlash(
-  import.meta.env.VITE_API_URL ?? import.meta.env.VITE_BASE_URL ?? DEFAULT_BASE_URL,
-);
+function getEnvValue(value: string | undefined) {
+  return value?.trim() || undefined;
+}
+
+const API_BASE_URL = trimTrailingSlash(getEnvValue(import.meta.env.VITE_API_URL) ?? DEFAULT_BASE_URL);
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY ?? "auth_token";
 
 interface ApiErrorBody {
