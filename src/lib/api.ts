@@ -1,4 +1,14 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api/v1";
+const DEFAULT_BASE_URL = import.meta.env.DEV
+  ? "http://localhost:4000"
+  : "https://intizom-server.onrender.com";
+
+function trimTrailingSlash(value: string) {
+  return value.replace(/\/+$/, "");
+}
+
+const API_BASE_URL = trimTrailingSlash(
+  import.meta.env.VITE_API_URL ?? import.meta.env.VITE_BASE_URL ?? DEFAULT_BASE_URL,
+);
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY ?? "auth_token";
 
 interface ApiErrorBody {
