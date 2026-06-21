@@ -8,6 +8,7 @@ import { DebtDialog } from "@/components/debts/DebtDialog";
 import { LoanCard } from "@/components/loans/LoanCard";
 import { LoanDialog } from "@/components/loans/LoanDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { ListLoading } from "@/components/DataLoading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -360,7 +361,9 @@ export default function DebtPage() {
               <NetCard borrowedTotals={borrowedTotals} lentTotals={lentTotals} />
             </div>
 
-            {!loadingDebts && debts.length === 0 ? (
+            {loadingDebts ? (
+              <ListLoading items={4} />
+            ) : debts.length === 0 ? (
               <EmptyState
                 icon={Banknote}
                 title="Qarzlar yo'q"
@@ -460,7 +463,9 @@ export default function DebtPage() {
               />
             </div>
 
-            {!loadingLoans && loans.length === 0 ? (
+            {loadingLoans ? (
+              <ListLoading items={4} />
+            ) : loans.length === 0 ? (
               <EmptyState
                 icon={CreditCard}
                 title="Kreditlar yo'q"

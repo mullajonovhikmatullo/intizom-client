@@ -25,6 +25,7 @@ import { StatsRow } from "@/components/habits/StatsRow";
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitDialog } from "@/components/habits/HabitDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { HabitType } from "@/lib/types";
@@ -215,16 +216,26 @@ export default function HabitsPage() {
             <DateStrip selected={selected} onSelect={setSelected} />
           </TabsContent>
           <TabsContent value="calendar" className="mt-3">
-            <HabitCalendar habits={habits} logs={logs} selected={selected} onSelect={setSelected} />
+            {loading ? <ChartLoading className="h-[360px]" /> : <HabitCalendar habits={habits} logs={logs} selected={selected} onSelect={setSelected} />}
           </TabsContent>
           <TabsContent value="matrix" className="mt-3">
-            <HabitMatrix habits={habits} logs={logs} onToggle={toggleAt} />
+            {loading ? <ChartLoading /> : <HabitMatrix habits={habits} logs={logs} onToggle={toggleAt} />}
           </TabsContent>
         </Tabs>
 
         <StatsRow streak={streak} todayPct={todayPct} weekPct={weekPct} />
 
-        {!loading && habits.length === 0 ? (
+        {loading ? (
+          <>
+            <Section title="Yaxshi odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={() => openNew("good")}>
+              <ListLoading items={3} />
+            </Section>
+
+            <Section title="Yomon odatlar" icon={<ShieldX className="h-4 w-4 text-destructive" />} onAdd={() => openNew("bad")}>
+              <ListLoading items={2} />
+            </Section>
+          </>
+        ) : habits.length === 0 ? (
           <EmptyState
             icon={CalendarIcon}
             title="Kunningizni kuzatishni boshlang"

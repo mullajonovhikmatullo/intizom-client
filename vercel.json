@@ -1,28 +1,32 @@
 {
   "rewrites": [
     {
+      "source": "/health",
+      "destination": "/api/proxy/health"
+    },
+    {
       "source": "/auth/:path*",
-      "destination": "https://intizom-server.onrender.com/auth/:path*"
+      "destination": "/api/proxy/auth/:path*"
     },
     {
       "source": "/todos/:path*",
-      "destination": "https://intizom-server.onrender.com/todos/:path*"
+      "destination": "/api/proxy/todos/:path*"
     },
     {
       "source": "/debts/:path*",
-      "destination": "https://intizom-server.onrender.com/debts/:path*"
+      "destination": "/api/proxy/debts/:path*"
     },
     {
       "source": "/expenses/:path*",
-      "destination": "https://intizom-server.onrender.com/expenses/:path*"
+      "destination": "/api/proxy/expenses/:path*"
     },
     {
       "source": "/loans/:path*",
-      "destination": "https://intizom-server.onrender.com/loans/:path*"
+      "destination": "/api/proxy/loans/:path*"
     },
     {
       "source": "/habits/:path*",
-      "destination": "https://intizom-server.onrender.com/habits/:path*"
+      "destination": "/api/proxy/habits/:path*"
     }
   ]
 }

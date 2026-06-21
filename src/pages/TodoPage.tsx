@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EmptyState } from "@/components/EmptyState";
+import { ListLoading } from "@/components/DataLoading";
 import { StatCard } from "@/components/StatCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -160,7 +161,9 @@ export default function TodoPage() {
           <StatCard label="Bajarildi" value={done.length} icon={CheckCircle2} colorClass="text-success" bgClass="bg-success/10" />
         </div>
 
-        {!loading && todos.length === 0 ? (
+        {loading ? (
+          <ListLoading items={4} />
+        ) : todos.length === 0 ? (
           <EmptyState
             icon={Target}
             title="Hali rejalar yo'q"

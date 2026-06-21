@@ -7,6 +7,7 @@ import { ExpenseItem } from "@/components/expenses/ExpenseItem";
 import { ExpenseDialog } from "@/components/expenses/ExpenseDialog";
 import { ExpenseCalendar } from "@/components/expenses/ExpenseCalendar";
 import { EmptyState } from "@/components/EmptyState";
+import { ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
@@ -172,7 +173,17 @@ export default function ExpensesPage() {
           </div>
         </div>
 
-        {!loading && expenses.length === 0 ? (
+        {loading ? (
+          <>
+            <section className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <h2 className="text-sm font-semibold text-muted-foreground">Taqvim</h2>
+              </div>
+              <ChartLoading className="h-[360px]" />
+            </section>
+            <ListLoading items={3} />
+          </>
+        ) : expenses.length === 0 ? (
           <EmptyState
             icon={Wallet}
             title="Xarajatlar yo'q"

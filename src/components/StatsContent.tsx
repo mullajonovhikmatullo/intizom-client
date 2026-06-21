@@ -14,6 +14,7 @@ import { isToday, isThisWeek, isThisMonth, parseISO, format } from "date-fns";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { BarChart3, Flame, LucideIcon, TrendingUp, Wallet, Trophy } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
+import { ChartLoading, ListLoading, StatGridLoading } from "@/components/DataLoading";
 import { fetchExpenses } from "@/lib/expenses";
 import { toast } from "sonner";
 
@@ -130,23 +131,24 @@ export function StatsContent() {
 
   return (
     <div className="space-y-6">
-      {loading && (
-        <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
-          Statistikalar yuklanmoqda...
-        </p>
-      )}
-
       <section className="space-y-3">
         <h2 className="px-1 text-sm font-semibold text-muted-foreground">Odat jarayoni</h2>
 
-        <div className="grid grid-cols-2 gap-3">
-          <BigStat label="Ketma-ketlik" value={`${habitMetrics.streak} kun`} icon={Flame} gradient="gradient-warm" />
-          <BigStat label="Bugun" value={`${habitMetrics.today}%`} icon={TrendingUp} gradient="gradient-success" />
-          <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={BarChart3} gradient="gradient-primary" />
-          <BigStat label="Bu oy" value={`${habitMetrics.month}%`} icon={Trophy} gradient="gradient-warm" />
-        </div>
+        {loading ? (
+          <StatGridLoading />
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <BigStat label="Ketma-ketlik" value={`${habitMetrics.streak} kun`} icon={Flame} gradient="gradient-warm" />
+            <BigStat label="Bugun" value={`${habitMetrics.today}%`} icon={TrendingUp} gradient="gradient-success" />
+            <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={BarChart3} gradient="gradient-primary" />
+            <BigStat label="Bu oy" value={`${habitMetrics.month}%`} icon={Trophy} gradient="gradient-warm" />
+          </div>
+        )}
 
-        <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
+        {loading ? (
+          <ChartLoading />
+        ) : (
+          <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold">So'nggi 14 kun</h3>
             <span className="text-xs text-muted-foreground">% bajarilish</span>
@@ -169,8 +171,9 @@ export function StatsContent() {
               </ResponsiveContainer>
             </div>
           )}
-        </div>
-        {perHabitStreaks.length > 0 && (
+          </div>
+        )}
+        {!loading && perHabitStreaks.length > 0 && (
           <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold">Har bir odat ketma-ketligi</h3>
@@ -201,14 +204,24 @@ export function StatsContent() {
       <section className="space-y-3">
         <h2 className="px-1 text-sm font-semibold text-muted-foreground">Xarajatlar</h2>
 
-        <div className="grid grid-cols-2 gap-3">
-          <SpendStat label="Bugun" value={formatByCurrency(expenseTotals.today)} />
-          <SpendStat label="Bu hafta" value={formatByCurrency(expenseTotals.week)} />
-          <SpendStat label="Bu oy" value={formatByCurrency(expenseTotals.month)} />
-          <SpendStat label="Jami" value={formatByCurrency(expenseTotals.all)} />
-        </div>
+        {loading ? (
+          <StatGridLoading />
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            <SpendStat label="Bugun" value={formatByCurrency(expenseTotals.today)} />
+            <SpendStat label="Bu hafta" value={formatByCurrency(expenseTotals.week)} />
+            <SpendStat label="Bu oy" value={formatByCurrency(expenseTotals.month)} />
+            <SpendStat label="Jami" value={formatByCurrency(expenseTotals.all)} />
+          </div>
+        )}
 
-        <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
+        {loading ? (
+          <div className="space-y-2">
+            <ChartLoading />
+            <ListLoading items={3} />
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold">Kategoriya bo'yicha</h3>
             {topCategory && (
@@ -262,7 +275,8 @@ export function StatsContent() {
               </ul>
             </div>
           )}
-        </div>
+          </div>
+        )}
       </section>
     </div>
   );
