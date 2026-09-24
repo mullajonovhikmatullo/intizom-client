@@ -10,7 +10,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
 import { toast } from "sonner";
-import { ApiError } from "@/lib/api";
+import { ApiError, isSessionExpiredError } from "@/lib/api";
+import { subscribeCreateItem } from "@/lib/ui-events";
 import {
   createExpense,
   deleteExpense as deleteExpenseApi,
@@ -19,14 +20,11 @@ import {
 } from "@/lib/expenses";
 
 function showExpenseError(error: unknown, fallback: string) {
+  if (isSessionExpiredError(error)) return;
+
   if (error instanceof ApiError) {
     if (error.code === "FUTURE_DATE_NOT_ALLOWED") {
       toast.error("Kelajak sanasiga xarajat kiritib bo'lmaydi");
-      return;
-    }
-
-    if (error.code === "UNAUTHORIZED" || error.code === "TOKEN_EXPIRED") {
-      toast.error("Sessiya tugagan. Qayta kiring");
       return;
     }
 
@@ -61,6 +59,15 @@ export default function ExpensesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [filterDate, setFilterDate] = useState<Date>(new Date());
+
+  useEffect(
+    () =>
+      subscribeCreateItem(() => {
+        setEditing(null);
+        setOpen(true);
+      }),
+    []
+  );
 
   useEffect(() => {
     let alive = true;
@@ -242,14 +249,6 @@ export default function ExpensesPage() {
           </>
         )}
       </div>
-
-      <button
-        onClick={() => { setEditing(null); setOpen(true); }}
-        className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow transition-bounce tap-scale hover:scale-105"
-        aria-label="Xarajat qo'shish"
-      >
-        <Plus className="h-6 w-6" strokeWidth={2.5} />
-      </button>
 
       <ExpenseDialog open={open} onOpenChange={setOpen} expense={editing} onSave={save} />
     </>

@@ -18,7 +18,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import { ApiError } from "@/lib/api";
+import { ApiError, isSessionExpiredError } from "@/lib/api";
+import { subscribeCreateItem } from "@/lib/ui-events";
 import {
   createTodo,
   deleteTodo as deleteTodoApi,
@@ -30,12 +31,9 @@ import {
 } from "@/lib/todos";
 
 function showTodoError(error: unknown, fallback: string) {
-  if (error instanceof ApiError) {
-    if (error.code === "UNAUTHORIZED" || error.code === "TOKEN_EXPIRED") {
-      toast.error("Sessiya tugagan. Qayta kiring");
-      return;
-    }
+  if (isSessionExpiredError(error)) return;
 
+  if (error instanceof ApiError) {
     if (error.code === "VALIDATION_ERROR") {
       toast.error("Ma'lumotlarni tekshirib qayta urinib ko'ring");
       return;
@@ -62,6 +60,15 @@ export default function TodoPage() {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Todo | null>(null);
+
+  useEffect(
+    () =>
+      subscribeCreateItem(() => {
+        setEditing(null);
+        setOpen(true);
+      }),
+    []
+  );
 
   useEffect(() => {
     let alive = true;
@@ -233,14 +240,6 @@ export default function TodoPage() {
           </Tabs>
         )}
       </div>
-
-      <button
-        onClick={() => { setEditing(null); setOpen(true); }}
-        className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow transition-bounce tap-scale hover:scale-105"
-        aria-label="Reja qo'shish"
-      >
-        <Plus className="h-6 w-6" strokeWidth={2.5} />
-      </button>
 
       <TodoDialog open={open} onOpenChange={setOpen} todo={editing} onSave={save} />
     </>

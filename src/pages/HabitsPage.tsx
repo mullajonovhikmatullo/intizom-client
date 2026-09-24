@@ -30,9 +30,12 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { HabitType } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ApiError } from "@/lib/api";
+import { ApiError, isSessionExpiredError } from "@/lib/api";
+import { subscribeCreateItem } from "@/lib/ui-events";
 
 function showHabitError(error: unknown, fallback: string) {
+  if (isSessionExpiredError(error)) return;
+
   if (error instanceof ApiError) {
     if (error.code === "PINNED_HABIT_LOCKED") {
       toast.error("Mahkamlangan odatni o'zgartirib bo'lmaydi");
@@ -44,10 +47,6 @@ function showHabitError(error: unknown, fallback: string) {
       return;
     }
 
-    if (error.code === "UNAUTHORIZED" || error.code === "TOKEN_EXPIRED") {
-      toast.error("Sessiya tugagan. Qayta kiring");
-      return;
-    }
   }
 
   toast.error(fallback);
@@ -61,6 +60,16 @@ export default function HabitsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Habit | null>(null);
   const [initialType, setInitialType] = useState<HabitType>("good");
+
+  useEffect(
+    () =>
+      subscribeCreateItem(() => {
+        setEditing(null);
+        setInitialType("good");
+        setDialogOpen(true);
+      }),
+    []
+  );
 
   useEffect(() => {
     let alive = true;
@@ -285,15 +294,6 @@ export default function HabitsPage() {
           </>
         )}
       </div>
-
-      {/* Floating action button */}
-      <button
-        onClick={() => openNew("good")}
-        className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow transition-bounce tap-scale hover:scale-105"
-        aria-label="Odat qo'shish"
-      >
-        <Plus className="h-6 w-6" strokeWidth={2.5} />
-      </button>
 
       <HabitDialog
         open={dialogOpen}

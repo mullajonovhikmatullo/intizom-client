@@ -15,6 +15,7 @@ import { getCurrentUser, logout } from "@/lib/auth";
 import { toast } from "sonner";
 import { fetchHabitLogs, fetchHabits } from "@/lib/habits";
 import { fetchExpenses } from "@/lib/expenses";
+import { isSessionExpiredError } from "@/lib/api";
 
 interface Props {
   title: string;
@@ -63,8 +64,10 @@ export function AppHeader({ title, subtitle }: Props) {
       a.click();
       URL.revokeObjectURL(url);
       toast.success("Ma'lumotlar eksport qilindi");
-    } catch {
-      toast.error("Eksport muvaffaqiyatsiz");
+    } catch (error) {
+      if (!isSessionExpiredError(error)) {
+        toast.error("Eksport muvaffaqiyatsiz");
+      }
     }
   };
 

@@ -12,6 +12,10 @@ function getEnvValue(value: string | undefined) {
 
 const API_BASE_URL = trimTrailingSlash(getEnvValue(import.meta.env.VITE_API_URL) ?? DEFAULT_BASE_URL);
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY ?? "auth_token";
+const USER_KEY = import.meta.env.VITE_AUTH_USER_KEY ?? "auth_user";
+const SESSION_ERROR_CODES = new Set(["UNAUTHORIZED", "TOKEN_EXPIRED", "INVALID_TOKEN"]);
+
+let isRedirectingToLogin = false;
 
 interface ApiErrorBody {
   error?: {
@@ -41,6 +45,39 @@ export class ApiError extends Error {
   }
 }
 
+export class SessionExpiredError extends Error {
+  constructor() {
+    super("Session expired");
+    this.name = "SessionExpiredError";
+  }
+}
+
+export function isSessionExpiredError(error: unknown): error is SessionExpiredError {
+  return error instanceof SessionExpiredError;
+}
+
+function endExpiredSession(): never {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(USER_KEY);
+
+  if (!isRedirectingToLogin && window.location.pathname !== "/login") {
+    isRedirectingToLogin = true;
+    window.location.replace("/login");
+  }
+
+  throw new SessionExpiredError();
+}
+
+function throwApiError(status: number, error?: ApiErrorBody["error"]): never {
+  const code = error?.code ?? "REQUEST_FAILED";
+
+  if (SESSION_ERROR_CODES.has(code)) {
+    endExpiredSession();
+  }
+
+  throw new ApiError(status, code, error?.message ?? "Request failed", error?.details);
+}
+
 export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem(TOKEN_KEY);
 
@@ -61,12 +98,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
 
   if (!response.ok) {
     const error = (body as ApiErrorBody | null)?.error;
-    throw new ApiError(
-      response.status,
-      error?.code ?? "REQUEST_FAILED",
-      error?.message ?? "Request failed",
-      error?.details,
-    );
+    throwApiError(response.status, error);
   }
 
   return (body as { data: T }).data;
@@ -90,12 +122,7 @@ export async function apiPaginatedRequest<T>(path: string, limit = 200): Promise
 
     if (!response.ok) {
       const error = (body as ApiErrorBody | null)?.error;
-      throw new ApiError(
-        response.status,
-        error?.code ?? "REQUEST_FAILED",
-        error?.message ?? "Request failed",
-        error?.details,
-      );
+      throwApiError(response.status, error);
     }
 
     return body as PaginatedResponse<T>;

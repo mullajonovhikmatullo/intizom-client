@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading, StatGridLoading } from "@/components/DataLoading";
 import { fetchExpenses } from "@/lib/expenses";
 import { toast } from "sonner";
+import { isSessionExpiredError } from "@/lib/api";
 
 function sumByCurrency(items: Expense[]): Map<string, number> {
   const map = new Map<string, number>();
@@ -54,8 +55,10 @@ export function StatsContent() {
         setHabits(remoteHabits);
         setLogs(remoteLogs);
         setExpenses(remoteExpenses);
-      } catch {
-        if (alive) toast.error("Statistikalarni yuklab bo'lmadi");
+      } catch (error) {
+        if (alive && !isSessionExpiredError(error)) {
+          toast.error("Statistikalarni yuklab bo'lmadi");
+        }
       } finally {
         if (alive) setLoading(false);
       }

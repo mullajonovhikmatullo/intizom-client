@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ApiError } from "@/lib/api";
+import { ApiError, isSessionExpiredError } from "@/lib/api";
 import { getCurrentUser, updateProfile } from "@/lib/auth";
 import { toast } from "sonner";
 
@@ -47,6 +47,8 @@ export default function ProfilePage() {
       setIsEditing(false);
       toast.success("Ma'lumotlar yangilandi");
     } catch (error) {
+      if (isSessionExpiredError(error)) return;
+
       if (error instanceof ApiError && error.code === "EMAIL_ALREADY_EXISTS") {
         toast.error("Bu email bilan hisob allaqachon mavjud");
         return;

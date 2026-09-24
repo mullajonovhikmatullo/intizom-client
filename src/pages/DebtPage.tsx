@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { differenceInCalendarDays, parseISO } from "date-fns";
-import { ApiError } from "@/lib/api";
+import { ApiError, isSessionExpiredError } from "@/lib/api";
+import { subscribeCreateItem } from "@/lib/ui-events";
 import {
   addDebtPayment as addDebtPaymentApi,
   createDebt,
@@ -33,6 +34,8 @@ import {
 type Section = "debts" | "loans";
 
 function showDebtFlowError(error: unknown, fallback: string) {
+  if (isSessionExpiredError(error)) return;
+
   if (error instanceof ApiError) {
     if (error.code === "PAST_DATE_NOT_ALLOWED") {
       toast.error("O'tgan sana muddat sifatida kiritilmaydi");
@@ -46,11 +49,6 @@ function showDebtFlowError(error: unknown, fallback: string) {
 
     if (error.code === "PAYMENT_TOO_LARGE") {
       toast.error("To'lov qoldiq qarzdan oshib ketmasligi kerak");
-      return;
-    }
-
-    if (error.code === "UNAUTHORIZED" || error.code === "TOKEN_EXPIRED") {
-      toast.error("Sessiya tugagan. Qayta kiring");
       return;
     }
 
@@ -307,11 +305,21 @@ export default function DebtPage() {
   const activeLoans = loans.filter((l) => l.installments.some((i) => !i.paid));
   const finishedLoans = loans.filter((l) => l.installments.every((i) => i.paid));
 
-  // FAB handler
-  const handleFab = () => {
-    if (section === "debts") openNew(activeTab);
-    else { setEditingLoan(null); setLoanOpen(true); }
-  };
+  useEffect(
+    () =>
+      subscribeCreateItem(() => {
+        if (section === "debts") {
+          setEditing(null);
+          setInitialDirection(activeTab);
+          setOpen(true);
+          return;
+        }
+
+        setEditingLoan(null);
+        setLoanOpen(true);
+      }),
+    [activeTab, section]
+  );
 
   return (
     <>
@@ -505,15 +513,6 @@ export default function DebtPage() {
           </div>
         )}
       </div>
-
-      {/* FAB */}
-      <button
-        onClick={handleFab}
-        className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-glow transition-bounce tap-scale hover:scale-105"
-        aria-label={section === "debts" ? "Qarz qo'shish" : "Kredit qo'shish"}
-      >
-        <Plus className="h-6 w-6" strokeWidth={2.5} />
-      </button>
 
       <DebtDialog open={open} onOpenChange={setOpen} debt={editing} initialDirection={initialDirection} onSave={save} />
       <LoanDialog open={loanOpen} onOpenChange={setLoanOpen} loan={editingLoan} onSave={saveLoan} />

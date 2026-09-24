@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import { Calendar, Badge, Segmented } from "antd";
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Habit, HabitLogs } from "@/lib/types";
 import { dailyCompletion } from "@/lib/habits";
 import { dateKey, todayKey } from "@/lib/date";
@@ -19,8 +21,16 @@ interface Props {
  * - Future days are disabled.
  */
 export function HabitCalendar({ habits, logs, selected, onSelect }: Props) {
+  const monthsScrollRef = useRef<HTMLDivElement>(null);
   const value = dayjs(selected);
   const today = dayjs();
+
+  const scrollMonths = (direction: -1 | 1) => {
+    monthsScrollRef.current?.scrollBy({
+      left: direction * 160,
+      behavior: "smooth",
+    });
+  };
 
   const cellRender = (current: Dayjs, info: { type: string }) => {
     if (info.type !== "date") return null;
@@ -80,16 +90,35 @@ export function HabitCalendar({ habits, logs, selected, onSelect }: Props) {
                   </button>
                 </div>
               </div>
-              <div className="overflow-x-auto scrollbar-none -mx-1 px-1">
-                <div className="[&_.ant-segmented-item-label]:!text-muted-foreground [&_.ant-segmented-item-selected_.ant-segmented-item-label]:!text-foreground">
-                  <Segmented
-                    size="small"
-                    value={month}
-                    onChange={(val) => onChange(v.clone().month(Number(val)).year(year))}
-                    options={UZ_MONTHS.map((m, i) => ({ label: m, value: i }))}
-                    style={{ whiteSpace: "nowrap" }}
-                  />
+              <div className="relative -mx-1">
+                <div ref={monthsScrollRef} className="no-scrollbar overflow-x-auto px-8">
+                  <div className="w-max [&_.ant-segmented-item-label]:!text-muted-foreground [&_.ant-segmented-item-selected_.ant-segmented-item-label]:!text-foreground">
+                    <Segmented
+                      size="small"
+                      value={month}
+                      onChange={(val) => onChange(v.clone().month(Number(val)).year(year))}
+                      options={UZ_MONTHS.map((m, i) => ({ label: m, value: i }))}
+                      style={{ whiteSpace: "nowrap" }}
+                    />
+                  </div>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => scrollMonths(-1)}
+                  className="absolute inset-y-0 left-0 flex w-8 items-center justify-center bg-gradient-to-r from-card via-card/90 to-transparent text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label="Oldingi oylarni ko‘rsatish"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollMonths(1)}
+                  className="absolute inset-y-0 right-0 flex w-8 items-center justify-center bg-gradient-to-l from-card via-card/90 to-transparent text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label="Keyingi oylarni ko‘rsatish"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
             </div>
           );
