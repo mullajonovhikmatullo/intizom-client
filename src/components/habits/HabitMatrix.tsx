@@ -26,9 +26,7 @@ export function HabitMatrix({ habits, logs, onToggle }: Props) {
   const today = todayKey();
 
   const habitColPct = (h: Habit, key: string) => {
-    // Per-habit success on a date: good = checked, bad = not checked
-    const checked = !!logs[h.id]?.[key];
-    return h.type === "good" ? (checked ? 100 : 0) : (checked ? 0 : 100);
+    return logs[h.id]?.[key] ? 100 : 0;
   };
 
   const dayColPct = (key: string) => {
@@ -36,8 +34,7 @@ export function HabitMatrix({ habits, logs, onToggle }: Props) {
     if (active.length === 0) return null;
     let done = 0;
     active.forEach((h) => {
-      const checked = !!logs[h.id]?.[key];
-      if (h.type === "good" ? checked : !checked) done++;
+      if (logs[h.id]?.[key]) done++;
     });
     return Math.round((done / active.length) * 100);
   };
@@ -144,12 +141,7 @@ export function HabitMatrix({ habits, logs, onToggle }: Props) {
                 <tr key={h.id} className="border-b border-border last:border-0">
                   <td className="min-w-0 bg-card px-2 py-2 sm:px-3">
                     <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-                      <span
-                        className={cn(
-                          "h-1.5 w-1.5 shrink-0 rounded-full",
-                          h.type === "good" ? "bg-success" : "bg-destructive"
-                        )}
-                      />
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-success" />
                       <span
                         className="block min-w-0 truncate text-[11px] font-medium text-foreground sm:text-sm"
                         title={h.title}
@@ -171,10 +163,7 @@ export function HabitMatrix({ habits, logs, onToggle }: Props) {
                             checked={checked}
                             disabled={disabled}
                             onCheckedChange={() => !disabled && onToggle(h.id, key)}
-                            className={cn(
-                              "h-4 w-4 rounded",
-                              h.type === "bad" && "data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
-                            )}
+                            className="h-4 w-4 rounded"
                           />
                         </div>
                       </td>

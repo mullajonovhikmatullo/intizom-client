@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
-import { Habit, HabitType } from "@/lib/types";
+import { Habit } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TimePicker, InputNumber } from "antd";
 import dayjs from "dayjs";
 
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  initialType?: HabitType;
   habit?: Habit | null;
   onSave: (data: Omit<Habit, "id" | "createdAt"> & { id?: string }) => void | Promise<void>;
 }
 
-export function HabitDialog({ open, onOpenChange, initialType = "good", habit, onSave }: Props) {
+export function HabitDialog({ open, onOpenChange, habit, onSave }: Props) {
   const [title, setTitle] = useState("");
   const [time, setTime] = useState<string | undefined>(undefined);
-  const [type, setType] = useState<HabitType>(initialType);
   const [targetDays, setTargetDays] = useState(90);
   const [saving, setSaving] = useState(false);
 
@@ -27,17 +24,16 @@ export function HabitDialog({ open, onOpenChange, initialType = "good", habit, o
     if (open) {
       setTitle(habit?.title ?? "");
       setTime(habit?.time || undefined);
-      setType(habit?.type ?? initialType);
       setTargetDays(habit?.targetDays ?? 90);
       setSaving(false);
     }
-  }, [open, habit, initialType]);
+  }, [open, habit]);
 
   const submit = async () => {
     if (!title.trim()) return;
     setSaving(true);
     try {
-      await onSave({ id: habit?.id, title: title.trim(), time: time || undefined, type, targetDays });
+      await onSave({ id: habit?.id, title: title.trim(), time: time || undefined, targetDays });
       onOpenChange(false);
     } catch {
       // The page-level save handler shows the relevant toast and keeps the dialog open.
@@ -53,13 +49,6 @@ export function HabitDialog({ open, onOpenChange, initialType = "good", habit, o
           <DialogTitle>{habit ? "Odatni tahrirlash" : "Yangi odat"}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
-          <Tabs value={type} onValueChange={(v) => setType(v as HabitType)}>
-            <TabsList className="grid w-full grid-cols-2 rounded-xl">
-              <TabsTrigger value="good" className="rounded-lg">✅ Yaxshi odat</TabsTrigger>
-              <TabsTrigger value="bad" className="rounded-lg">❌ Yomon odat</TabsTrigger>
-            </TabsList>
-          </Tabs>
-
           <div className="space-y-2">
             <Label htmlFor="h-title">Nomi</Label>
             <Input id="h-title" placeholder="mas. 20 daqiqa o'qish" value={title} onChange={(e) => setTitle(e.target.value)} />

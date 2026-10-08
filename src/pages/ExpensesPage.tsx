@@ -250,7 +250,7 @@ export default function ExpensesPage() {
         )}
       </div>
 
-      <ExpenseDialog open={open} onOpenChange={setOpen} expense={editing} onSave={save} />
+      <ExpenseDialog open={open} onOpenChange={setOpen} expense={editing} defaultDate={format(filterDate, "yyyy-MM-dd")} onSave={save} />
     </>
   );
 }

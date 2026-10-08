@@ -29,9 +29,6 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
   const completed = daysCompletedTowardGoal(habit, logs);
   const pct = Math.min(100, Math.round((completed / habit.targetDays) * 100));
 
-  // visual: for "good", checked=success; for "bad", checked=relapse
-  const positive = habit.type === "good" ? checked : !checked;
-
   return (
     <div className={cn(
       "group rounded-xl border bg-card px-3 py-2.5 shadow-sm transition-base hover:shadow-soft animate-fade-in",
@@ -45,13 +42,9 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
           className={cn(
             "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 transition-bounce tap-scale",
             isFuture && "opacity-50 cursor-not-allowed",
-            habit.type === "good"
-              ? checked
-                ? "border-success bg-success text-success-foreground shadow-glow"
-                : "border-border bg-background hover:border-primary"
-              : checked
-              ? "border-destructive bg-destructive text-destructive-foreground"
-              : "border-border bg-background hover:border-destructive/60"
+            checked
+              ? "border-success bg-success text-success-foreground shadow-glow"
+              : "border-border bg-background hover:border-primary"
           )}
         >
           {checked && <Check className="h-3.5 w-3.5 animate-pop" strokeWidth={3} />}
@@ -60,7 +53,7 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
-              <h3 className={cn("truncate text-sm font-semibold leading-tight flex items-center gap-1.5", positive && checked && "text-success")}>
+              <h3 className={cn("truncate text-sm font-semibold leading-tight flex items-center gap-1.5", checked && "text-success")}>
                 {habit.pinned && <Pin className="h-3 w-3 shrink-0 fill-primary text-primary" />}
                 <span className="truncate">{habit.title}</span>
               </h3>

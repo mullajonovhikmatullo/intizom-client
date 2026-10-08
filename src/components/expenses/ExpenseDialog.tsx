@@ -15,15 +15,18 @@ interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   expense?: Expense | null;
+  defaultDate?: string;
   onSave: (data: Omit<Expense, "id" | "createdAt"> & { id?: string }) => void | Promise<void>;
 }
+
+const QUICK_TITLES = ["Nonushta", "Tushlik", "Kechki ovqat"];
 
 const CURRENCIES = [
   { label: "so'm", value: " so'm" },
   { label: "$", value: "$" },
 ];
 
-export function ExpenseDialog({ open, onOpenChange, expense, onSave }: Props) {
+export function ExpenseDialog({ open, onOpenChange, expense, defaultDate, onSave }: Props) {
   const { settings } = useTheme();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState<number | null>(null);
@@ -38,10 +41,10 @@ export function ExpenseDialog({ open, onOpenChange, expense, onSave }: Props) {
       setAmount(expense?.amount ?? null);
       setCurrency(expense?.currency ?? settings.currency);
       setCategory(expense?.category ?? "food");
-      setDate(expense?.date ?? todayKey());
+      setDate(expense?.date ?? (defaultDate && defaultDate <= todayKey() ? defaultDate : todayKey()));
       setSaving(false);
     }
-  }, [open, expense, settings.currency]);
+  }, [open, expense, defaultDate, settings.currency]);
 
   const isUsd = currency === "$";
 
@@ -68,6 +71,26 @@ export function ExpenseDialog({ open, onOpenChange, expense, onSave }: Props) {
           <div className="space-y-2">
             <Label htmlFor="e-title">Nima sotib oldingiz?</Label>
             <Input id="e-title" placeholder="mas. Qahva" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <div className="flex flex-wrap gap-2">
+              {QUICK_TITLES.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => {
+                    setTitle(t);
+                    setCategory("food");
+                  }}
+                  className={cn(
+                    "rounded-lg border px-3 py-1 text-xs font-medium transition-colors",
+                    title.trim() === t
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-card text-muted-foreground hover:border-primary/50"
+                  )}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">

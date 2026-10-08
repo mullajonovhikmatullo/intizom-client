@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, ShieldX, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Sparkles, Calendar as CalendarIcon } from "lucide-react";
 import { Habit, HabitLogs } from "@/lib/types";
 import { dateKey, todayKey, weekRange } from "@/lib/date";
 import {
@@ -28,7 +28,6 @@ import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { HabitType } from "@/lib/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiError, isSessionExpiredError } from "@/lib/api";
 import { subscribeCreateItem } from "@/lib/ui-events";
@@ -59,13 +58,11 @@ export default function HabitsPage() {
   const [selected, setSelected] = useState<Date>(new Date());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Habit | null>(null);
-  const [initialType, setInitialType] = useState<HabitType>("good");
 
   useEffect(
     () =>
       subscribeCreateItem(() => {
         setEditing(null);
-        setInitialType("good");
         setDialogOpen(true);
       }),
     []
@@ -102,12 +99,10 @@ export default function HabitsPage() {
   const streak = useMemo(() => calcStreak(habits, logs), [habits, logs]);
 
   const sortPinned = (a: Habit, b: Habit) => Number(!!b.pinned) - Number(!!a.pinned);
-  const goods = habits.filter((h) => h.type === "good").sort(sortPinned);
-  const bads = habits.filter((h) => h.type === "bad").sort(sortPinned);
+  const sortedHabits = [...habits].sort(sortPinned);
 
-  const openNew = (type: HabitType) => {
+  const openNew = () => {
     setEditing(null);
-    setInitialType(type);
     setDialogOpen(true);
   };
 
@@ -117,7 +112,6 @@ export default function HabitsPage() {
       return;
     }
     setEditing(h);
-    setInitialType(h.type);
     setDialogOpen(true);
   };
 
@@ -235,70 +229,35 @@ export default function HabitsPage() {
         <StatsRow streak={streak} todayPct={todayPct} weekPct={weekPct} />
 
         {loading ? (
-          <>
-            <Section title="Yaxshi odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={() => openNew("good")}>
-              <ListLoading items={3} />
-            </Section>
-
-            <Section title="Yomon odatlar" icon={<ShieldX className="h-4 w-4 text-destructive" />} onAdd={() => openNew("bad")}>
-              <ListLoading items={2} />
-            </Section>
-          </>
+          <Section title="Odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={openNew}>
+            <ListLoading items={3} />
+          </Section>
         ) : habits.length === 0 ? (
           <EmptyState
             icon={CalendarIcon}
             title="Kunningizni kuzatishni boshlang"
-            description="Qo'shmoqchi yoki tark etmoqchi bo'lgan odatlaringizni qo'shing. Har kuni kichik qadamlar."
+            description="Shakllantirmoqchi yoki tark etmoqchi bo'lgan odatlaringizni qo'shing, mas. «Energetik ichmaslik». Har kuni kichik qadamlar."
             action={
-              <div className="flex flex-wrap justify-center gap-2">
-                <Button onClick={() => openNew("good")} className="rounded-xl">
-                  <Plus className="mr-1 h-4 w-4" /> Yaxshi odat
-                </Button>
-                <Button onClick={() => openNew("bad")} variant="outline" className="rounded-xl">
-                  <Plus className="mr-1 h-4 w-4" /> Yomon odat
-                </Button>
-              </div>
+              <Button onClick={openNew} className="rounded-xl">
+                <Plus className="mr-1 h-4 w-4" /> Odat qo'shish
+              </Button>
             }
           />
         ) : (
-          <>
-            <Section title="Yaxshi odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={() => openNew("good")}>
-              {goods.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
-                  Hozircha yaxshi odatlar yo'q.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {goods.map((h) => (
-                    <HabitCard key={h.id} habit={h} logs={logs} selectedDate={selected}
-                      onToggle={() => toggle(h.id)} onEdit={() => openEdit(h)} onDelete={() => deleteHabit(h.id)} onTogglePin={() => togglePin(h.id)} />
-                  ))}
-                </div>
-              )}
-            </Section>
-
-            <Section title="Yomon odatlar" icon={<ShieldX className="h-4 w-4 text-destructive" />} onAdd={() => openNew("bad")}>
-              {bads.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
-                  Hozircha yomon odatlar kuzatilmagan.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {bads.map((h) => (
-                    <HabitCard key={h.id} habit={h} logs={logs} selectedDate={selected}
-                      onToggle={() => toggle(h.id)} onEdit={() => openEdit(h)} onDelete={() => deleteHabit(h.id)} onTogglePin={() => togglePin(h.id)} />
-                  ))}
-                </div>
-              )}
-            </Section>
-          </>
+          <Section title="Odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={openNew}>
+            <div className="space-y-2">
+              {sortedHabits.map((h) => (
+                <HabitCard key={h.id} habit={h} logs={logs} selectedDate={selected}
+                  onToggle={() => toggle(h.id)} onEdit={() => openEdit(h)} onDelete={() => deleteHabit(h.id)} onTogglePin={() => togglePin(h.id)} />
+              ))}
+            </div>
+          </Section>
         )}
       </div>
 
       <HabitDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        initialType={initialType}
         habit={editing}
         onSave={saveHabit}
       />

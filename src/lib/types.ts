@@ -1,10 +1,7 @@
-export type HabitType = "good" | "bad";
-
 export interface Habit {
   id: string;
   title: string;
   time?: string; // HH:mm — optional; if empty, no specific time
-  type: HabitType;
   createdAt: string; // ISO date
   targetDays: number;
   pinned?: boolean;

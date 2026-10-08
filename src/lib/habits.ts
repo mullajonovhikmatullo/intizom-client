@@ -9,7 +9,7 @@ interface HabitLogRecord {
   completed: boolean;
 }
 
-type HabitPayload = Pick<Habit, "title" | "type" | "targetDays"> & {
+type HabitPayload = Pick<Habit, "title" | "targetDays"> & {
   time?: string | null;
 };
 
@@ -77,11 +77,7 @@ export function dailyCompletion(habits: Habit[], logs: HabitLogs, date = todayKe
   // Only count habits that existed on the given date
   const active = habits.filter((h) => dateKey(new Date(h.createdAt)) <= date);
   if (active.length === 0) return 0;
-  const goods = active.filter((h) => h.type === "good");
-  const bads = active.filter((h) => h.type === "bad");
-  let done = 0;
-  goods.forEach((h) => { if (isCompleted(logs, h.id, date)) done++; });
-  bads.forEach((h) => { if (!isCompleted(logs, h.id, date)) done++; });
+  const done = active.filter((h) => isCompleted(logs, h.id, date)).length;
   return Math.round((done / active.length) * 100);
 }
 
@@ -97,11 +93,10 @@ export function habitStreak(habit: Habit, logs: HabitLogs) {
   let cursor = new Date();
   const created = dateKey(new Date(habit.createdAt));
   const entries = logs[habit.id] || {};
-  const isSuccess = (key: string) => (habit.type === "good" ? !!entries[key] : !entries[key]);
   while (true) {
     const key = dateKey(cursor);
     if (key < created) break;
-    if (isSuccess(key)) {
+    if (entries[key]) {
       count++;
       cursor = subDays(cursor, 1);
     } else {
@@ -142,12 +137,5 @@ export function streak(habits: Habit[], logs: HabitLogs) {
 
 export function daysCompletedTowardGoal(habit: Habit, logs: HabitLogs) {
   const entries = logs[habit.id] || {};
-  if (habit.type === "good") {
-    return Object.values(entries).filter(Boolean).length;
-  }
-  // bad habit: count days since createdAt where it was NOT checked
-  const created = new Date(habit.createdAt);
-  const today = new Date();
-  const days = rangeDays(created, today);
-  return days.filter((d) => !entries[dateKey(d)]).length;
+  return Object.values(entries).filter(Boolean).length;
 }

@@ -185,13 +185,13 @@ export function StatsContent() {
             <ul className="space-y-2">
               {perHabitStreaks.map(({ habit, streak }) => (
                 <li key={habit.id} className="flex items-center gap-3">
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${habit.type === "good" ? "gradient-success" : "gradient-warm"} text-white`}>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg gradient-success text-white`}>
                     <Flame className="h-4 w-4" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{habit.title}</div>
                     <div className="text-[11px] text-muted-foreground">
-                      {habit.type === "good" ? "Yaxshi odat" : "Yomon odat"}
+                      Maqsad: {habit.targetDays} kun
                     </div>
                   </div>
                   <div className="text-sm font-bold tabular-nums">

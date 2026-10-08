@@ -121,6 +121,18 @@
     @apply h-full;
   }
 
+  /* Keep the scrollbar's space reserved so opening a dropdown/dialog (which locks
+     scroll) doesn't change the viewport width and shift the page sideways. */
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  /* The gutter is already reserved, so drop Radix's scrollbar compensation. */
+  html body[data-scroll-locked] {
+    margin-right: 0 !important;
+    --removed-body-scroll-bar-size: 0px !important;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv11", "ss01";
