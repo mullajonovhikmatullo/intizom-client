@@ -30,6 +30,11 @@ export interface Expense {
   createdAt: string;
 }
 
+export interface ExpenseBudget {
+  weeklyAmount: number;
+  currency: string; // " so'm" | "$"
+}
+
 export interface Settings {
   theme: "light" | "dark";
   currency: string;

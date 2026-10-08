@@ -1,5 +1,5 @@
 import { apiPaginatedRequest, apiRequest } from "./api";
-import { Expense } from "./types";
+import { Expense, ExpenseBudget } from "./types";
 
 type ExpensePayload = Omit<Expense, "id" | "createdAt">;
 
@@ -23,4 +23,19 @@ export async function updateExpense(id: string, data: ExpensePayload) {
 
 export async function deleteExpense(id: string) {
   await apiRequest<void>(`/expenses/${id}`, { method: "DELETE" });
+}
+
+export async function fetchExpenseBudget() {
+  return apiRequest<ExpenseBudget | null>("/expenses/budget", { method: "GET" });
+}
+
+export async function saveExpenseBudget(data: ExpenseBudget) {
+  return apiRequest<ExpenseBudget>("/expenses/budget", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteExpenseBudget() {
+  await apiRequest<void>("/expenses/budget", { method: "DELETE" });
 }

@@ -76,7 +76,7 @@ export function AppHeader({ title, subtitle }: Props) {
       <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <span className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent shrink-0">
-            Intizom
+            discip.uz
           </span>
           <div className="min-w-0 border-l border-border/60 pl-3">
             <h1 className="truncate text-base font-semibold tracking-tight">{title}</h1>

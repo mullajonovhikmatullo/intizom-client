@@ -42,7 +42,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            Intizom
+            discip.uz
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Davom etish uchun hisobingizga kiring
@@ -56,7 +56,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="demo@intizom.uz"
+                placeholder="demo@discip.uz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

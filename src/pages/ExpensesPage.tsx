@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Plus, Wallet } from "lucide-react";
-import { Expense } from "@/lib/types";
+import { Expense, ExpenseBudget } from "@/lib/types";
 import { ExpenseItem } from "@/components/expenses/ExpenseItem";
 import { ExpenseDialog } from "@/components/expenses/ExpenseDialog";
 import { ExpenseCalendar } from "@/components/expenses/ExpenseCalendar";
+import { BudgetCard } from "@/components/expenses/BudgetCard";
+import { BudgetDialog } from "@/components/expenses/BudgetDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
@@ -15,7 +17,10 @@ import { subscribeCreateItem } from "@/lib/ui-events";
 import {
   createExpense,
   deleteExpense as deleteExpenseApi,
+  deleteExpenseBudget,
+  fetchExpenseBudget,
   fetchExpenses,
+  saveExpenseBudget,
   updateExpense,
 } from "@/lib/expenses";
 
@@ -59,6 +64,8 @@ export default function ExpensesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Expense | null>(null);
   const [filterDate, setFilterDate] = useState<Date>(new Date());
+  const [budget, setBudget] = useState<ExpenseBudget | null>(null);
+  const [budgetOpen, setBudgetOpen] = useState(false);
 
   useEffect(
     () =>
@@ -74,8 +81,14 @@ export default function ExpensesPage() {
 
     const loadExpenses = async () => {
       try {
-        const remoteExpenses = await fetchExpenses();
-        if (alive) setExpenses(remoteExpenses);
+        const [remoteExpenses, remoteBudget] = await Promise.all([
+          fetchExpenses(),
+          // A missing budget shouldn't block the expense list.
+          fetchExpenseBudget().catch(() => null),
+        ]);
+        if (!alive) return;
+        setExpenses(remoteExpenses);
+        setBudget(remoteBudget);
       } catch (error) {
         if (alive) showExpenseError(error, "Xarajatlarni yuklab bo'lmadi");
       } finally {
@@ -134,6 +147,27 @@ export default function ExpensesPage() {
     }
   };
 
+  const saveBudget = async (data: ExpenseBudget) => {
+    try {
+      setBudget(await saveExpenseBudget(data));
+      toast.success("Haftalik maqsad saqlandi");
+    } catch (error) {
+      showExpenseError(error, "Maqsadni saqlab bo'lmadi");
+      throw error;
+    }
+  };
+
+  const removeBudget = async () => {
+    try {
+      await deleteExpenseBudget();
+      setBudget(null);
+      toast.success("Haftalik maqsad o'chirildi");
+    } catch (error) {
+      showExpenseError(error, "Maqsadni o'chirib bo'lmadi");
+      throw error;
+    }
+  };
+
   const remove = async (id: string) => {
     const previousExpenses = expenses;
     setExpenses((arr) => arr.filter((e) => e.id !== id));
@@ -179,6 +213,8 @@ export default function ExpensesPage() {
             </div>
           </div>
         </div>
+
+        {!loading && <BudgetCard budget={budget} expenses={expenses} onEdit={() => setBudgetOpen(true)} />}
 
         {loading ? (
           <>
@@ -251,6 +287,7 @@ export default function ExpensesPage() {
       </div>
 
       <ExpenseDialog open={open} onOpenChange={setOpen} expense={editing} defaultDate={format(filterDate, "yyyy-MM-dd")} onSave={save} />
+      <BudgetDialog open={budgetOpen} onOpenChange={setBudgetOpen} budget={budget} onSave={saveBudget} onDelete={removeBudget} />
     </>
   );
 }
