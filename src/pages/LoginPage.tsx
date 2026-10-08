@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { isAuthenticated, login } from "@/lib/auth";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -41,8 +42,8 @@ export default function LoginPage() {
     <div className="min-h-full flex flex-col items-center justify-center px-4 py-12 bg-background">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            discip.uz
+          <h1 className="flex justify-center">
+            <BrandLogo size="lg" />
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Davom etish uchun hisobingizga kiring

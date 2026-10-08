@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api";
 import { isAuthenticated, register } from "@/lib/auth";
 import { toast } from "sonner";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -56,8 +57,8 @@ export default function RegisterPage() {
     <div className="min-h-full flex flex-col items-center justify-center px-4 py-12 bg-background">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            discip.uz
+          <h1 className="flex justify-center">
+            <BrandLogo size="lg" />
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Yangi hisob yaratib davom eting

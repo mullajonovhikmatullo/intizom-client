@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingDown, TrendingUp, Scale, Banknote, CreditCard, AlertTriangle } from "lucide-react";
+import { Plus, Weight, HandHeart, Scale, HandCoins, Handshake, Landmark, AlarmClock } from "lucide-react";
 import { Debt, DebtPayment, Loan } from "@/lib/types";
 import { DebtCard } from "@/components/debts/DebtCard";
 import { DebtDialog } from "@/components/debts/DebtDialog";
@@ -340,7 +340,7 @@ export default function DebtPage() {
               section === "debts" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <Banknote className="h-4 w-4" />
+            <HandCoins className="h-4 w-4" />
             Qarzlar
           </button>
           <button
@@ -350,11 +350,11 @@ export default function DebtPage() {
               section === "loans" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <CreditCard className="h-4 w-4" />
+            <Landmark className="h-4 w-4" />
             Kreditlar
             {dueSoonCount > 0 && (
               <span className="ml-0.5 inline-flex items-center gap-0.5 rounded-full bg-warning/20 px-1.5 py-0.5 text-[10px] text-warning-foreground">
-                <AlertTriangle className="h-2.5 w-2.5" /> {dueSoonCount}
+                <AlarmClock className="h-2.5 w-2.5" /> {dueSoonCount}
               </span>
             )}
           </button>
@@ -364,8 +364,8 @@ export default function DebtPage() {
         {section === "debts" && (
           <div className="space-y-4 animate-fade-in">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              <SummaryCard label="Mening qarzim" text={formatCurrencyMap(borrowedTotals)} icon={TrendingDown} colorClass="text-destructive" bgClass="bg-destructive/10" />
-              <SummaryCard label="Menga tegadi" text={formatCurrencyMap(lentTotals)} icon={TrendingUp} colorClass="text-success" bgClass="bg-success/10" />
+              <SummaryCard label="Mening qarzim" text={formatCurrencyMap(borrowedTotals)} icon={Weight} colorClass="text-destructive" bgClass="bg-destructive/10" />
+              <SummaryCard label="Menga tegadi" text={formatCurrencyMap(lentTotals)} icon={HandHeart} colorClass="text-success" bgClass="bg-success/10" />
               <NetCard borrowedTotals={borrowedTotals} lentTotals={lentTotals} />
             </div>
 
@@ -373,7 +373,7 @@ export default function DebtPage() {
               <ListLoading items={4} />
             ) : debts.length === 0 ? (
               <EmptyState
-                icon={Banknote}
+                icon={Handshake}
                 title="Qarzlar yo'q"
                 description="Kimdan qarz olganingizni yoki kimga qarz berganingizni kiriting."
                 action={
@@ -458,14 +458,14 @@ export default function DebtPage() {
               <SummaryCard
                 label="Qolgan kredit qarzi"
                 text={formatCurrencyMap(loansTotals)}
-                icon={CreditCard}
+                icon={Landmark}
                 colorClass="text-primary"
                 bgClass="bg-primary/10"
               />
               <SummaryCard
                 label="Yaqin to'lovlar (≤1 kun)"
                 text={dueSoonCount === 0 ? "Yo'q" : `${dueSoonCount} ta`}
-                icon={AlertTriangle}
+                icon={AlarmClock}
                 colorClass={dueSoonCount > 0 ? "text-warning-foreground" : "text-muted-foreground"}
                 bgClass={dueSoonCount > 0 ? "bg-warning/20" : "bg-muted"}
               />
@@ -475,7 +475,7 @@ export default function DebtPage() {
               <ListLoading items={4} />
             ) : loans.length === 0 ? (
               <EmptyState
-                icon={CreditCard}
+                icon={Landmark}
                 title="Kreditlar yo'q"
                 description="Bank yoki muassasaga oylik bo'lib to'laydigan kreditingizni qo'shing."
                 action={
@@ -531,8 +531,8 @@ interface SummaryCardProps {
 function SummaryCard({ label, text, icon: Icon, colorClass, bgClass }: SummaryCardProps) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-3 shadow-sm">
-      <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", bgClass, colorClass)}>
-        <Icon className="h-5 w-5" />
+      <div className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", bgClass, colorClass)}>
+        <Icon className="h-6 w-6" />
       </div>
       <div className="min-w-0 flex-1">
         <div className={cn("truncate text-sm font-bold tabular-nums leading-tight", colorClass)} title={text}>

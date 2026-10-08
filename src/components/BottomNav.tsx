@@ -1,15 +1,16 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Banknote, Home, ListTodo, Plus, Wallet } from "lucide-react";
+import { HandCoins, PiggyBank, Plus } from "lucide-react";
+import { Sisyphus, Summit } from "@/components/icons/motivation";
 import { cn } from "@/lib/utils";
 import { requestCreateItem } from "@/lib/ui-events";
 import { BOTTOM_NAV_HEIGHT, createBottomNavPath } from "@/lib/bottom-nav-shape";
 
 const items = [
-  { to: "/", label: "Odatlar", icon: Home, end: true, column: "col-start-1" },
-  { to: "/expenses", label: "Xarajatlar", icon: Wallet, column: "col-start-2" },
-  { to: "/todos", label: "Rejalar", icon: ListTodo, column: "col-start-4" },
-  { to: "/debts", label: "Qarzlar", icon: Banknote, column: "col-start-5" },
+  { to: "/", label: "Odatlar", icon: Sisyphus, end: true, column: "col-start-1" },
+  { to: "/expenses", label: "Xarajatlar", icon: PiggyBank, column: "col-start-2" },
+  { to: "/todos", label: "Rejalar", icon: Summit, column: "col-start-4" },
+  { to: "/debts", label: "Qarzlar", icon: HandCoins, column: "col-start-5" },
 ];
 
 export function BottomNav() {
@@ -68,7 +69,7 @@ export function BottomNav() {
                       )}
                     >
                       <Icon
-                        className={cn("h-[1.35rem] w-[1.35rem]", isActive && "animate-pop")}
+                        className={cn("h-[1.6rem] w-[1.6rem]", isActive && "animate-pop")}
                         strokeWidth={isActive ? 2.5 : 2}
                       />
                     </span>

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, Sparkles, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, Sprout } from "lucide-react";
+import { Sisyphus } from "@/components/icons/motivation";
 import { Habit, HabitLogs } from "@/lib/types";
 import { dateKey, todayKey, weekRange } from "@/lib/date";
 import {
@@ -229,12 +230,12 @@ export default function HabitsPage() {
         <StatsRow streak={streak} todayPct={todayPct} weekPct={weekPct} />
 
         {loading ? (
-          <Section title="Odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={openNew}>
+          <Section title="Odatlar" icon={<Sisyphus className="h-5 w-5 text-primary" />} onAdd={openNew}>
             <ListLoading items={3} />
           </Section>
         ) : habits.length === 0 ? (
           <EmptyState
-            icon={CalendarIcon}
+            icon={Sprout}
             title="Kunningizni kuzatishni boshlang"
             description="Shakllantirmoqchi yoki tark etmoqchi bo'lgan odatlaringizni qo'shing, mas. «Energetik ichmaslik». Har kuni kichik qadamlar."
             action={
@@ -244,7 +245,7 @@ export default function HabitsPage() {
             }
           />
         ) : (
-          <Section title="Odatlar" icon={<Sparkles className="h-4 w-4 text-success" />} onAdd={openNew}>
+          <Section title="Odatlar" icon={<Sisyphus className="h-5 w-5 text-primary" />} onAdd={openNew}>
             <div className="space-y-2">
               {sortedHabits.map((h) => (
                 <HabitCard key={h.id} habit={h} logs={logs} selectedDate={selected}

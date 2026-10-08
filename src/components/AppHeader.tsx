@@ -1,4 +1,5 @@
 import { Moon, Sun, Download, LogOut, User as UserIcon } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -74,11 +75,9 @@ export function AppHeader({ title, subtitle }: Props) {
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-xl safe-top">
       <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent shrink-0">
-            discip.uz
-          </span>
-          <div className="min-w-0 border-l border-border/60 pl-3">
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+          <BrandLogo />
+          <div className="min-w-0 border-l border-border/60 pl-2.5 sm:pl-3">
             <h1 className="truncate text-base font-semibold tracking-tight">{title}</h1>
             {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
           </div>

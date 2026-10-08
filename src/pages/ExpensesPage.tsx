@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, Wallet } from "lucide-react";
+import { PiggyBank, Plus } from "lucide-react";
 import { Expense, ExpenseBudget } from "@/lib/types";
 import { ExpenseItem } from "@/components/expenses/ExpenseItem";
 import { ExpenseDialog } from "@/components/expenses/ExpenseDialog";
@@ -228,7 +228,7 @@ export default function ExpensesPage() {
           </>
         ) : expenses.length === 0 ? (
           <EmptyState
-            icon={Wallet}
+            icon={PiggyBank}
             title="Xarajatlar yo'q"
             description="Xarajatlarni ko'rish uchun birinchi xaridingizni kiriting."
             action={

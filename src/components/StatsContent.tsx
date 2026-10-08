@@ -12,7 +12,7 @@ import { dateKey, lastNDays, monthRange, weekRange } from "@/lib/date";
 import { categoryMeta, CATEGORIES } from "@/lib/categories";
 import { isToday, isThisWeek, isThisMonth, parseISO, format } from "date-fns";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { BarChart3, Flame, LucideIcon, TrendingUp, Wallet, Trophy } from "lucide-react";
+import { Flame, LucideIcon, PiggyBank, Sunrise, TrendingUp, Trophy } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading, StatGridLoading } from "@/components/DataLoading";
 import { fetchExpenses } from "@/lib/expenses";
@@ -142,8 +142,8 @@ export function StatsContent() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             <BigStat label="Ketma-ketlik" value={`${habitMetrics.streak} kun`} icon={Flame} gradient="gradient-warm" />
-            <BigStat label="Bugun" value={`${habitMetrics.today}%`} icon={TrendingUp} gradient="gradient-success" />
-            <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={BarChart3} gradient="gradient-primary" />
+            <BigStat label="Bugun" value={`${habitMetrics.today}%`} icon={Sunrise} gradient="gradient-success" />
+            <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={TrendingUp} gradient="gradient-primary" />
             <BigStat label="Bu oy" value={`${habitMetrics.month}%`} icon={Trophy} gradient="gradient-warm" />
           </div>
         )}
@@ -235,7 +235,7 @@ export function StatsContent() {
           </div>
 
           {byCategory.length === 0 ? (
-            <EmptyState icon={Wallet} title="Xarajat ma'lumotlari yo'q" description="Diagrammalarni ochish uchun xarajatlarni kiriting." />
+            <EmptyState icon={PiggyBank} title="Xarajat ma'lumotlari yo'q" description="Diagrammalarni ochish uchun xarajatlarni kiriting." />
           ) : (
             <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-2">
               <div className="h-44">
@@ -288,8 +288,8 @@ export function StatsContent() {
 function BigStat({ label, value, icon: Icon, gradient }: { label: string; value: string; icon: LucideIcon; gradient: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card p-2.5 shadow-sm">
-      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${gradient} text-white`}>
-        <Icon className="h-4 w-4" />
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${gradient} text-white`}>
+        <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate text-base font-bold leading-tight tabular-nums">{value}</div>
@@ -303,7 +303,7 @@ function SpendStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card p-2.5 shadow-sm">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Wallet className="h-4 w-4" />
+        <PiggyBank className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-bold leading-tight tabular-nums">{value}</div>

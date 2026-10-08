@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CheckCircle2, AlertTriangle, XCircle, Pencil, Target } from "lucide-react";
+import { Frown, Goal, Meh, Pencil, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Expense, ExpenseBudget } from "@/lib/types";
@@ -11,10 +11,10 @@ interface Props {
   onEdit: () => void;
 }
 
-const STATUS_STYLES: Record<BudgetStatus, { icon: typeof CheckCircle2; box: string; bar: string }> = {
-  ok: { icon: CheckCircle2, box: "border-success/30 bg-success/10 text-success", bar: "bg-success" },
-  ahead: { icon: AlertTriangle, box: "border-warning/40 bg-warning/10 text-warning", bar: "bg-warning" },
-  over: { icon: XCircle, box: "border-destructive/30 bg-destructive/10 text-destructive", bar: "bg-destructive" },
+const STATUS_STYLES: Record<BudgetStatus, { icon: typeof Smile; box: string; bar: string }> = {
+  ok: { icon: Smile, box: "border-success/30 bg-success/10 text-success", bar: "bg-success" },
+  ahead: { icon: Meh, box: "border-warning/40 bg-warning/10 text-warning", bar: "bg-warning" },
+  over: { icon: Frown, box: "border-destructive/30 bg-destructive/10 text-destructive", bar: "bg-destructive" },
 };
 
 const statusFor = (spent: number, limit: number, planToDate: number): BudgetStatus =>
@@ -61,7 +61,7 @@ export function BudgetCard({ budget, expenses, onEdit }: Props) {
         className="flex w-full items-center gap-3 rounded-2xl border border-dashed border-border bg-card/50 p-4 text-left transition-base hover:border-primary/50"
       >
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-          <Target className="h-4 w-4" />
+          <Goal className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold">Haftalik maqsad qo'ying</div>
@@ -99,7 +99,7 @@ export function BudgetCard({ budget, expenses, onEdit }: Props) {
     <section className="space-y-3 rounded-2xl border border-border/70 bg-card p-4 shadow-sm">
       <div className="flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
-          <Target className="h-4 w-4 text-primary" /> Xarajat maqsadlari
+          <Goal className="h-5 w-5 text-primary" /> Xarajat maqsadlari
         </h2>
         <Button size="sm" variant="ghost" className="h-7 rounded-lg px-2 text-xs" onClick={onEdit}>
           <Pencil className="mr-1 h-3.5 w-3.5" /> O'zgartirish
@@ -114,7 +114,11 @@ export function BudgetCard({ budget, expenses, onEdit }: Props) {
         ].map((g) => (
           <div key={g.label} className="rounded-xl bg-secondary/60 px-2 py-2">
             <div className="text-[11px] text-muted-foreground">{g.label}</div>
-            <div className="truncate text-sm font-bold tabular-nums">{formatMoney(g.value, currency)}</div>
+            <div className="truncate text-sm font-bold tabular-nums">
+              {currency === "$" && "$"}
+              {Math.round(g.value).toLocaleString()}
+            </div>
+            {currency !== "$" && <div className="text-[10px] text-muted-foreground">{currency.trim()}</div>}
           </div>
         ))}
       </div>
@@ -127,8 +131,8 @@ export function BudgetCard({ budget, expenses, onEdit }: Props) {
           status={statusFor(p.monthSpent, p.monthly, p.monthPlanToDate)} />
       </div>
 
-      <div className={cn("flex items-start gap-2 rounded-xl border px-3 py-2", STATUS_STYLES[p.status].box)}>
-        <StatusIcon className="mt-0.5 h-4 w-4 shrink-0" />
+      <div className={cn("flex items-center gap-2.5 rounded-xl border px-3 py-2", STATUS_STYLES[p.status].box)}>
+        <StatusIcon className="h-6 w-6 shrink-0" />
         <div className="min-w-0">
           <div className="text-sm font-semibold">{message}</div>
           <div className="text-xs text-foreground/70">{hint}</div>

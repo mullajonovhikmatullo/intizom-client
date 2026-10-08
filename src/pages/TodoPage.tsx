@@ -13,7 +13,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Target, Trash2, Pencil, Flag, CheckCircle2 } from "lucide-react";
+import { Plus, Rocket, Trash2, Pencil, Flag, PartyPopper } from "lucide-react";
+import { Summit } from "@/components/icons/motivation";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "antd";
@@ -164,15 +165,15 @@ export default function TodoPage() {
 
       <div className="space-y-4 px-4 pt-4">
         <div className="grid grid-cols-2 gap-3">
-          <StatCard label="Bajarilmagan" value={active.length} icon={Target} colorClass="text-primary" bgClass="bg-primary/10" />
-          <StatCard label="Bajarildi" value={done.length} icon={CheckCircle2} colorClass="text-success" bgClass="bg-success/10" />
+          <StatCard label="Bajarilmagan" value={active.length} icon={Rocket} colorClass="text-primary" bgClass="bg-primary/10" />
+          <StatCard label="Bajarildi" value={done.length} icon={PartyPopper} colorClass="text-success" bgClass="bg-success/10" />
         </div>
 
         {loading ? (
           <ListLoading items={4} />
         ) : todos.length === 0 ? (
           <EmptyState
-            icon={Target}
+            icon={Summit}
             title="Hali rejalar yo'q"
             description="Kelajakda bajarmoqchi bo'lgan ishlaringizni va maqsadlaringizni yozing."
             action={
