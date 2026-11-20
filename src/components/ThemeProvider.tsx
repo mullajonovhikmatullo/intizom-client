@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect } from "react";
+import { flushSync } from "react-dom";
 import { useLocalStorage, STORAGE_KEYS } from "@/lib/storage";
 import { Settings } from "@/lib/types";
 
@@ -29,23 +30,34 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     else root.classList.remove("dark");
   }, [settings.theme]);
 
-  const applyTheme = (t: "light" | "dark") => {
+  // Switch the whole page at once: per-element hover transitions are suspended so nothing
+  // lags behind the background, and (where supported) old and new themes crossfade as one image.
+  const changeTheme = (t: "light" | "dark") => {
     const root = document.documentElement;
-    if (t === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
+    const swap = () => {
+      root.classList.toggle("dark", t === "dark");
+      // Commit React-driven theme output (icons, antd tokens) in the same frame.
+      flushSync(() => setSettings((s) => ({ ...s, theme: t })));
+    };
+
+    root.classList.add("theme-switching");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (typeof document.startViewTransition === "function" && !reduceMotion) {
+      const transition = document.startViewTransition(swap);
+      void transition.finished.finally(() => root.classList.remove("theme-switching"));
+      return;
+    }
+
+    swap();
+    // Re-enable transitions only after the new colors have been painted.
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove("theme-switching")));
   };
 
   const value: Ctx = {
     settings,
-    setTheme: (t) => {
-      applyTheme(t);
-      setSettings((s) => ({ ...s, theme: t }));
-    },
-    toggleTheme: () => {
-      const next = settings.theme === "dark" ? "light" : "dark";
-      applyTheme(next);
-      setSettings((s) => ({ ...s, theme: next }));
-    },
+    setTheme: changeTheme,
+    toggleTheme: () => changeTheme(settings.theme === "dark" ? "light" : "dark"),
   };
 
   return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;

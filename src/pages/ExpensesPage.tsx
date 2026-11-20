@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { PiggyBank, Plus } from "lucide-react";
+import { Plus, Wallet } from "lucide-react";
 import { Expense, ExpenseBudget } from "@/lib/types";
 import { ExpenseItem } from "@/components/expenses/ExpenseItem";
 import { ExpenseDialog } from "@/components/expenses/ExpenseDialog";
@@ -9,7 +9,7 @@ import { ExpenseCalendar } from "@/components/expenses/ExpenseCalendar";
 import { BudgetCard } from "@/components/expenses/BudgetCard";
 import { BudgetDialog } from "@/components/expenses/BudgetDialog";
 import { EmptyState } from "@/components/EmptyState";
-import { ChartLoading, ListLoading } from "@/components/DataLoading";
+import { BudgetLoading, ChartLoading, ListLoading } from "@/components/DataLoading";
 import { format, parseISO, isToday, isThisWeek, isThisMonth } from "date-fns";
 import { toast } from "sonner";
 import { ApiError, isSessionExpiredError } from "@/lib/api";
@@ -214,7 +214,7 @@ export default function ExpensesPage() {
           </div>
         </div>
 
-        {!loading && <BudgetCard budget={budget} expenses={expenses} onEdit={() => setBudgetOpen(true)} />}
+        {loading ? <BudgetLoading /> : <BudgetCard budget={budget} expenses={expenses} onEdit={() => setBudgetOpen(true)} />}
 
         {loading ? (
           <>
@@ -228,7 +228,7 @@ export default function ExpensesPage() {
           </>
         ) : expenses.length === 0 ? (
           <EmptyState
-            icon={PiggyBank}
+            icon={Wallet}
             title="Xarajatlar yo'q"
             description="Xarajatlarni ko'rish uchun birinchi xaridingizni kiriting."
             action={

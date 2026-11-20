@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Debt, DebtDirection } from "@/lib/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -78,8 +79,8 @@ export function DebtDialog({ open, onOpenChange, debt, initialDirection = "borro
         <div className="space-y-4 pt-2">
           <Tabs value={direction} onValueChange={(v) => setDirection(v as DebtDirection)}>
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
-              <TabsTrigger value="borrowed" className="rounded-lg">💸 Men oldim</TabsTrigger>
-              <TabsTrigger value="lent" className="rounded-lg">🤝 Men berdim</TabsTrigger>
+              <TabsTrigger value="borrowed" className="rounded-lg"><ArrowUpRight className="mr-1.5 h-4 w-4 shrink-0" />Men oldim</TabsTrigger>
+              <TabsTrigger value="lent" className="rounded-lg"><ArrowDownLeft className="mr-1.5 h-4 w-4 shrink-0" />Men berdim</TabsTrigger>
             </TabsList>
           </Tabs>
 
@@ -128,6 +129,8 @@ export function DebtDialog({ open, onOpenChange, debt, initialDirection = "borro
                     : Number(val).toLocaleString();
                 }}
                 parser={(val) => (val ? Number(val.replace(isUsd ? /[^\d.]/g : /[^\d]/g, "")) : 0)}
+                inputMode={isUsd ? "decimal" : "numeric"}
+                pattern={isUsd ? "[0-9.]*" : "[0-9]*"}
                 placeholder={isUsd ? "0.00" : "0"}
                 addonBefore={isUsd ? "$" : undefined}
                 addonAfter={!isUsd ? "so'm" : undefined}

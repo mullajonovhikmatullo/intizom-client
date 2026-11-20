@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, Sprout } from "lucide-react";
-import { Sisyphus } from "@/components/icons/motivation";
+import { CalendarCheck, Plus, Sprout } from "lucide-react";
 import { Habit, HabitLogs } from "@/lib/types";
 import { dateKey, todayKey, weekRange } from "@/lib/date";
 import {
@@ -14,6 +13,7 @@ import {
   fetchHabits,
   isCompleted,
   rangeCompletion,
+  reorderHabits,
   setHabitLog,
   setHabitPinned,
   streak as calcStreak,
@@ -24,6 +24,7 @@ import { HabitCalendar } from "@/components/habits/HabitCalendar";
 import { HabitMatrix } from "@/components/habits/HabitMatrix";
 import { StatsRow } from "@/components/habits/StatsRow";
 import { HabitCard } from "@/components/habits/HabitCard";
+import { SortableHabitList } from "@/components/habits/SortableHabitList";
 import { HabitDialog } from "@/components/habits/HabitDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading } from "@/components/DataLoading";
@@ -101,6 +102,17 @@ export default function HabitsPage() {
 
   const sortPinned = (a: Habit, b: Habit) => Number(!!b.pinned) - Number(!!a.pinned);
   const sortedHabits = [...habits].sort(sortPinned);
+
+  const reorder = async (next: Habit[]) => {
+    const previousHabits = habits;
+    setHabits(next);
+    try {
+      await reorderHabits(next.map((h) => h.id));
+    } catch (error) {
+      setHabits(previousHabits);
+      showHabitError(error, "Tartibni saqlab bo'lmadi");
+    }
+  };
 
   const openNew = () => {
     setEditing(null);
@@ -230,7 +242,7 @@ export default function HabitsPage() {
         <StatsRow streak={streak} todayPct={todayPct} weekPct={weekPct} />
 
         {loading ? (
-          <Section title="Odatlar" icon={<Sisyphus className="h-5 w-5 text-primary" />} onAdd={openNew}>
+          <Section title="Odatlar" icon={<CalendarCheck className="h-5 w-5 text-primary" />} onAdd={openNew}>
             <ListLoading items={3} />
           </Section>
         ) : habits.length === 0 ? (
@@ -245,13 +257,15 @@ export default function HabitsPage() {
             }
           />
         ) : (
-          <Section title="Odatlar" icon={<Sisyphus className="h-5 w-5 text-primary" />} onAdd={openNew}>
-            <div className="space-y-2">
-              {sortedHabits.map((h) => (
-                <HabitCard key={h.id} habit={h} logs={logs} selectedDate={selected}
+          <Section title="Odatlar" icon={<CalendarCheck className="h-5 w-5 text-primary" />} onAdd={openNew}>
+            <SortableHabitList
+              habits={sortedHabits}
+              onReorder={reorder}
+              renderItem={(h, handle, isDragging) => (
+                <HabitCard habit={h} logs={logs} selectedDate={selected} dragHandle={handle} isDragging={isDragging}
                   onToggle={() => toggle(h.id)} onEdit={() => openEdit(h)} onDelete={() => deleteHabit(h.id)} onTogglePin={() => togglePin(h.id)} />
-              ))}
-            </div>
+              )}
+            />
           </Section>
         )}
       </div>

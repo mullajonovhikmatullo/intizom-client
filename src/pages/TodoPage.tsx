@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { EmptyState } from "@/components/EmptyState";
-import { ListLoading } from "@/components/DataLoading";
+import { ListLoading, TabsLoading } from "@/components/DataLoading";
 import { StatCard } from "@/components/StatCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -13,8 +13,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Rocket, Trash2, Pencil, Flag, PartyPopper } from "lucide-react";
-import { Summit } from "@/components/icons/motivation";
+import { Plus, Hourglass, Trash2, Pencil, Flag, CircleCheckBig, ListTodo, PartyPopper, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "antd";
@@ -165,15 +164,18 @@ export default function TodoPage() {
 
       <div className="space-y-4 px-4 pt-4">
         <div className="grid grid-cols-2 gap-3">
-          <StatCard label="Bajarilmagan" value={active.length} icon={Rocket} colorClass="text-primary" bgClass="bg-primary/10" />
-          <StatCard label="Bajarildi" value={done.length} icon={PartyPopper} colorClass="text-success" bgClass="bg-success/10" />
+          <StatCard label="Bajarilmagan" value={active.length} icon={Hourglass} colorClass="text-primary" bgClass="bg-primary/10" />
+          <StatCard label="Bajarildi" value={done.length} icon={CircleCheckBig} colorClass="text-success" bgClass="bg-success/10" />
         </div>
 
         {loading ? (
-          <ListLoading items={4} />
+          <div>
+            <TabsLoading />
+            <ListLoading items={4} className="mt-3" />
+          </div>
         ) : todos.length === 0 ? (
           <EmptyState
-            icon={Summit}
+            icon={ListTodo}
             title="Hali rejalar yo'q"
             description="Kelajakda bajarmoqchi bo'lgan ishlaringizni va maqsadlaringizni yozing."
             action={
@@ -186,7 +188,8 @@ export default function TodoPage() {
           <Tabs defaultValue="active" className="w-full">
             <TabsList className="grid w-full grid-cols-2 rounded-xl">
               <TabsTrigger value="active" className="rounded-lg">
-                📌 Bajarilmagan
+                <Hourglass className="mr-1.5 h-4 w-4 shrink-0" />
+                Bajarilmagan
                 {active.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {active.length}
@@ -194,7 +197,8 @@ export default function TodoPage() {
                 )}
               </TabsTrigger>
               <TabsTrigger value="done" className="rounded-lg">
-                ✅ Bajarildi
+                <CircleCheckBig className="mr-1.5 h-4 w-4 shrink-0" />
+                Bajarildi
                 {done.length > 0 && (
                   <span className="ml-1.5 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">
                     {done.length}
@@ -203,10 +207,11 @@ export default function TodoPage() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="active" className="mt-3 space-y-2">
+            <TabsContent value="active" forceMount className="mt-3 space-y-2 data-[state=inactive]:hidden">
               {active.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
-                  Bajarilmagan rejalar yo'q. 🎉
+                <p className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
+                  Bajarilmagan rejalar yo'q.
+                  <PartyPopper className="h-4 w-4 shrink-0 text-primary" />
                 </p>
               ) : (
                 active.map((t) => (
@@ -221,7 +226,7 @@ export default function TodoPage() {
               )}
             </TabsContent>
 
-            <TabsContent value="done" className="mt-3 space-y-2">
+            <TabsContent value="done" forceMount className="mt-3 space-y-2 data-[state=inactive]:hidden">
               {done.length === 0 ? (
                 <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">
                   Hozircha bajarilgan rejalar yo'q.
@@ -295,7 +300,8 @@ function TodoItem({ todo, onToggle, onEdit, onDelete }: { todo: Todo; onToggle: 
             </span>
             {todo.dueDate && (
               <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium", dueBadgeClass)}>
-                📅 {isOverdue ? "Kechikdi · " : isDueToday ? "Bugun · " : ""}{todo.dueDate}
+                <CalendarClock className="h-2.5 w-2.5" />
+                {isOverdue ? "Kechikdi · " : isDueToday ? "Bugun · " : ""}{todo.dueDate}
               </span>
             )}
           </div>

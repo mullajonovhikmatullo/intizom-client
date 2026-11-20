@@ -1,15 +1,14 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { HandCoins, PiggyBank, Plus } from "lucide-react";
-import { Sisyphus, Summit } from "@/components/icons/motivation";
+import { CalendarCheck, HandCoins, ListTodo, Plus, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { requestCreateItem } from "@/lib/ui-events";
 import { BOTTOM_NAV_HEIGHT, createBottomNavPath } from "@/lib/bottom-nav-shape";
 
 const items = [
-  { to: "/", label: "Odatlar", icon: Sisyphus, end: true, column: "col-start-1" },
-  { to: "/expenses", label: "Xarajatlar", icon: PiggyBank, column: "col-start-2" },
-  { to: "/todos", label: "Rejalar", icon: Summit, column: "col-start-4" },
+  { to: "/", label: "Odatlar", icon: CalendarCheck, end: true, column: "col-start-1" },
+  { to: "/expenses", label: "Xarajatlar", icon: Wallet, column: "col-start-2" },
+  { to: "/todos", label: "Rejalar", icon: ListTodo, column: "col-start-4" },
   { to: "/debts", label: "Qarzlar", icon: HandCoins, column: "col-start-5" },
 ];
 
@@ -55,7 +54,7 @@ export function BottomNav() {
                 end={end}
                 className={({ isActive }) =>
                   cn(
-                    "pointer-events-auto flex h-full min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl px-0.5 pt-1 text-[10px] font-semibold transition-base tap-scale focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:px-1 sm:text-xs",
+                    "pointer-events-auto flex h-full min-w-0 flex-col items-center justify-center gap-1.5 rounded-lg px-0.5 pt-1 text-[10px] font-semibold transition-base tap-scale focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:px-1 sm:text-xs",
                     isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                   )
                 }
@@ -64,7 +63,7 @@ export function BottomNav() {
                   <>
                     <span
                       className={cn(
-                        "flex h-9 w-12 items-center justify-center rounded-2xl transition-base",
+                        "flex h-9 w-12 items-center justify-center rounded-lg transition-base",
                         isActive && "bg-primary/10 shadow-sm"
                       )}
                     >
@@ -84,7 +83,7 @@ export function BottomNav() {
         <button
           type="button"
           onClick={requestCreateItem}
-          className="pointer-events-auto absolute left-1/2 top-4 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full gradient-primary text-primary-foreground shadow-[0_3px_8px_hsl(var(--primary)/0.2)] transition-bounce tap-scale hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="pointer-events-auto absolute left-1/2 top-4 z-10 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[9999px] gradient-primary text-primary-foreground shadow-[0_3px_8px_hsl(var(--primary)/0.2)] transition-bounce tap-scale hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           aria-label="Yangi ma'lumot qo'shish"
         >
           <Plus className="h-7 w-7" strokeWidth={2.75} />

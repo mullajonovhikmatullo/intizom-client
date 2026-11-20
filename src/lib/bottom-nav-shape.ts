@@ -7,7 +7,9 @@ export function createBottomNavPath(width: number): string {
   // leaves an even 8px gap along its sides and bottom.
   const cradleRadius = 40;
   const shoulderRadius = 8;
-  const cornerRadius = 32;
+  // 1.5x the app radius (--radius, 8px): the bar is a larger floating surface, and its 8px
+  // item pills sit ~4-6px inside it. Circular arcs so corners match CSS border-radius.
+  const cornerRadius = 12;
 
   // Externally tangent circles join the horizontal edge to the cradle
   // without a sharp corner, a straight bridge, or a painted-over surface.
@@ -23,12 +25,12 @@ export function createBottomNavPath(width: number): string {
     `A ${cradleRadius} ${cradleRadius} 0 1 0 ${centerX + tangentOffset} ${tangentY}`,
     `A ${shoulderRadius} ${shoulderRadius} 0 0 1 ${centerX + shoulderOffset} 0`,
     `H ${width - cornerRadius}`,
-    `Q ${width} 0 ${width} ${cornerRadius}`,
+    `A ${cornerRadius} ${cornerRadius} 0 0 1 ${width} ${cornerRadius}`,
     `V ${BOTTOM_NAV_HEIGHT - cornerRadius}`,
-    `Q ${width} ${BOTTOM_NAV_HEIGHT} ${width - cornerRadius} ${BOTTOM_NAV_HEIGHT}`,
+    `A ${cornerRadius} ${cornerRadius} 0 0 1 ${width - cornerRadius} ${BOTTOM_NAV_HEIGHT}`,
     `H ${cornerRadius}`,
-    `Q 0 ${BOTTOM_NAV_HEIGHT} 0 ${BOTTOM_NAV_HEIGHT - cornerRadius}`,
+    `A ${cornerRadius} ${cornerRadius} 0 0 1 0 ${BOTTOM_NAV_HEIGHT - cornerRadius}`,
     `V ${cornerRadius}`,
-    `Q 0 0 ${cornerRadius} 0 Z`,
+    `A ${cornerRadius} ${cornerRadius} 0 0 1 ${cornerRadius} 0 Z`,
   ].join(" ");
 }

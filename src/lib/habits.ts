@@ -51,6 +51,14 @@ export async function deleteHabit(id: string) {
   await apiRequest<void>(`/habits/${id}`, { method: "DELETE" });
 }
 
+/** Persist the manual order: ids in display order (pinned habits first). */
+export async function reorderHabits(ids: string[]) {
+  await apiRequest<void>("/habits/order", {
+    method: "PUT",
+    body: JSON.stringify({ ids }),
+  });
+}
+
 export async function setHabitPinned(id: string, pinned: boolean) {
   return apiRequest<Habit>(`/habits/${id}/pin`, {
     method: "PATCH",

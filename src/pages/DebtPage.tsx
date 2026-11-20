@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { Plus, Weight, HandHeart, Scale, HandCoins, Handshake, Landmark, AlarmClock } from "lucide-react";
+import { Plus, ArrowUpRight, ArrowDownLeft, Scale, HandCoins, Handshake, Landmark, AlarmClock } from "lucide-react";
 import { Debt, DebtPayment, Loan } from "@/lib/types";
 import { DebtCard } from "@/components/debts/DebtCard";
 import { DebtDialog } from "@/components/debts/DebtDialog";
 import { LoanCard } from "@/components/loans/LoanCard";
 import { LoanDialog } from "@/components/loans/LoanDialog";
 import { EmptyState } from "@/components/EmptyState";
-import { ListLoading } from "@/components/DataLoading";
+import { ListLoading, TabsLoading } from "@/components/DataLoading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -361,157 +361,160 @@ export default function DebtPage() {
         </div>
 
         {/* === DEBTS SECTION === */}
-        {section === "debts" && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              <SummaryCard label="Mening qarzim" text={formatCurrencyMap(borrowedTotals)} icon={Weight} colorClass="text-destructive" bgClass="bg-destructive/10" />
-              <SummaryCard label="Menga tegadi" text={formatCurrencyMap(lentTotals)} icon={HandHeart} colorClass="text-success" bgClass="bg-success/10" />
-              <NetCard borrowedTotals={borrowedTotals} lentTotals={lentTotals} />
-            </div>
-
-            {loadingDebts ? (
-              <ListLoading items={4} />
-            ) : debts.length === 0 ? (
-              <EmptyState
-                icon={Handshake}
-                title="Qarzlar yo'q"
-                description="Kimdan qarz olganingizni yoki kimga qarz berganingizni kiriting."
-                action={
-                  <div className="flex flex-wrap justify-center gap-2">
-                    <Button onClick={() => openNew("borrowed")} variant="outline" className="rounded-xl">
-                      <Plus className="mr-1 h-4 w-4" /> Men oldim
-                    </Button>
-                    <Button onClick={() => openNew("lent")} className="rounded-xl">
-                      <Plus className="mr-1 h-4 w-4" /> Men berdim
-                    </Button>
-                  </div>
-                }
-              />
-            ) : (
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "borrowed" | "lent")} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 rounded-xl">
-                  <TabsTrigger value="borrowed" className="rounded-lg">
-                    💸 Men oldim
-                    {borrowed.filter((d) => !d.isPaid).length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-destructive/20 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
-                        {borrowed.filter((d) => !d.isPaid).length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                  <TabsTrigger value="lent" className="rounded-lg">
-                    🤝 Men berdim
-                    {lent.filter((d) => !d.isPaid).length > 0 && (
-                      <span className="ml-1.5 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">
-                        {lent.filter((d) => !d.isPaid).length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                </TabsList>
-
-                {(["borrowed", "lent"] as const).map((dir) => {
-                  const list = dir === "borrowed" ? borrowed : lent;
-                  const emptyMsg = dir === "borrowed" ? "Hozircha qarz olganlar yo'q." : "Hozircha qarz berganlar yo'q.";
-                  return (
-                    <TabsContent key={dir} value={dir} className="mt-3 space-y-2">
-                      {list.length === 0 ? (
-                        <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">{emptyMsg}</p>
-                      ) : (
-                        <>
-                          {list.filter((d) => !d.isPaid).map((d) => (
-                            <DebtCard key={d.id} debt={d}
-                              onEdit={() => { setEditing(d); setOpen(true); }}
-                              onDelete={() => remove(d.id)}
-                              onTogglePaid={() => togglePaid(d.id)}
-                              onAddPayment={(p) => addPayment(d.id, p)} />
-                          ))}
-                          {list.some((d) => d.isPaid) && (
-                            <details className="group">
-                              <summary className="cursor-pointer list-none py-1 text-xs text-muted-foreground hover:text-foreground">
-                                <span className="group-open:hidden">▶ To'langanlarni ko'rish ({list.filter((d) => d.isPaid).length})</span>
-                                <span className="hidden group-open:inline">▼ Yashirish</span>
-                              </summary>
-                              <div className="mt-2 space-y-2">
-                                {list.filter((d) => d.isPaid).map((d) => (
-                                  <DebtCard key={d.id} debt={d}
-                                    onEdit={() => { setEditing(d); setOpen(true); }}
-                                    onDelete={() => remove(d.id)}
-                                    onTogglePaid={() => togglePaid(d.id)}
-                                    onAddPayment={(p) => addPayment(d.id, p)} />
-                                ))}
-                              </div>
-                            </details>
-                          )}
-                        </>
-                      )}
-                    </TabsContent>
-                  );
-                })}
-              </Tabs>
-            )}
+        {/* Both sections stay mounted and are only hidden, so switching never
+            blanks the content or replays mount animations. */}
+        <div className="space-y-4" hidden={section !== "debts"}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <SummaryCard label="Mening qarzim" text={formatCurrencyMap(borrowedTotals)} icon={ArrowUpRight} colorClass="text-destructive" bgClass="bg-destructive/10" />
+            <SummaryCard label="Menga tegadi" text={formatCurrencyMap(lentTotals)} icon={ArrowDownLeft} colorClass="text-success" bgClass="bg-success/10" />
+            <NetCard borrowedTotals={borrowedTotals} lentTotals={lentTotals} />
           </div>
-        )}
+
+          {loadingDebts ? (
+            <div>
+              <TabsLoading />
+              <ListLoading items={4} className="mt-3" />
+            </div>
+          ) : debts.length === 0 ? (
+            <EmptyState
+              icon={Handshake}
+              title="Qarzlar yo'q"
+              description="Kimdan qarz olganingizni yoki kimga qarz berganingizni kiriting."
+              action={
+                <div className="flex flex-wrap justify-center gap-2">
+                  <Button onClick={() => openNew("borrowed")} variant="outline" className="rounded-xl">
+                    <Plus className="mr-1 h-4 w-4" /> Men oldim
+                  </Button>
+                  <Button onClick={() => openNew("lent")} className="rounded-xl">
+                    <Plus className="mr-1 h-4 w-4" /> Men berdim
+                  </Button>
+                </div>
+              }
+            />
+          ) : (
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "borrowed" | "lent")} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 rounded-xl">
+                <TabsTrigger value="borrowed" className="rounded-lg">
+                  <ArrowUpRight className="mr-1.5 h-4 w-4 shrink-0" />
+                  Men oldim
+                  {borrowed.filter((d) => !d.isPaid).length > 0 && (
+                    <span className="ml-1.5 rounded-full bg-destructive/20 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
+                      {borrowed.filter((d) => !d.isPaid).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="lent" className="rounded-lg">
+                  <ArrowDownLeft className="mr-1.5 h-4 w-4 shrink-0" />
+                  Men berdim
+                  {lent.filter((d) => !d.isPaid).length > 0 && (
+                    <span className="ml-1.5 rounded-full bg-success/20 px-1.5 py-0.5 text-[10px] font-semibold text-success">
+                      {lent.filter((d) => !d.isPaid).length}
+                    </span>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+
+              {(["borrowed", "lent"] as const).map((dir) => {
+                const list = dir === "borrowed" ? borrowed : lent;
+                const emptyMsg = dir === "borrowed" ? "Hozircha qarz olganlar yo'q." : "Hozircha qarz berganlar yo'q.";
+                return (
+                  <TabsContent key={dir} value={dir} forceMount className="mt-3 space-y-2 data-[state=inactive]:hidden">
+                    {list.length === 0 ? (
+                      <p className="rounded-xl border border-dashed border-border bg-card/50 p-4 text-center text-sm text-muted-foreground">{emptyMsg}</p>
+                    ) : (
+                      <>
+                        {list.filter((d) => !d.isPaid).map((d) => (
+                          <DebtCard key={d.id} debt={d}
+                            onEdit={() => { setEditing(d); setOpen(true); }}
+                            onDelete={() => remove(d.id)}
+                            onTogglePaid={() => togglePaid(d.id)}
+                            onAddPayment={(p) => addPayment(d.id, p)} />
+                        ))}
+                        {list.some((d) => d.isPaid) && (
+                          <details className="group">
+                            <summary className="cursor-pointer list-none py-1 text-xs text-muted-foreground hover:text-foreground">
+                              <span className="group-open:hidden">▶ To'langanlarni ko'rish ({list.filter((d) => d.isPaid).length})</span>
+                              <span className="hidden group-open:inline">▼ Yashirish</span>
+                            </summary>
+                            <div className="mt-2 space-y-2">
+                              {list.filter((d) => d.isPaid).map((d) => (
+                                <DebtCard key={d.id} debt={d}
+                                  onEdit={() => { setEditing(d); setOpen(true); }}
+                                  onDelete={() => remove(d.id)}
+                                  onTogglePaid={() => togglePaid(d.id)}
+                                  onAddPayment={(p) => addPayment(d.id, p)} />
+                              ))}
+                            </div>
+                          </details>
+                        )}
+                      </>
+                    )}
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          )}
+        </div>
 
         {/* === LOANS SECTION === */}
-        {section === "loans" && (
-          <div className="space-y-4 animate-fade-in">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <SummaryCard
-                label="Qolgan kredit qarzi"
-                text={formatCurrencyMap(loansTotals)}
-                icon={Landmark}
-                colorClass="text-primary"
-                bgClass="bg-primary/10"
-              />
-              <SummaryCard
-                label="Yaqin to'lovlar (≤1 kun)"
-                text={dueSoonCount === 0 ? "Yo'q" : `${dueSoonCount} ta`}
-                icon={AlarmClock}
-                colorClass={dueSoonCount > 0 ? "text-warning-foreground" : "text-muted-foreground"}
-                bgClass={dueSoonCount > 0 ? "bg-warning/20" : "bg-muted"}
-              />
-            </div>
-
-            {loadingLoans ? (
-              <ListLoading items={4} />
-            ) : loans.length === 0 ? (
-              <EmptyState
-                icon={Landmark}
-                title="Kreditlar yo'q"
-                description="Bank yoki muassasaga oylik bo'lib to'laydigan kreditingizni qo'shing."
-                action={
-                  <Button onClick={() => { setEditingLoan(null); setLoanOpen(true); }} className="rounded-xl">
-                    <Plus className="mr-1 h-4 w-4" /> Kredit qo'shish
-                  </Button>
-                }
-              />
-            ) : (
-              <div className="space-y-2">
-                {activeLoans.map((l) => (
-                  <LoanCard key={l.id} loan={l}
-                    onEdit={() => { setEditingLoan(l); setLoanOpen(true); }}
-                    onDelete={() => removeLoan(l.id)}
-                    onTogglePaid={(instId) => toggleInstallment(l.id, instId)} />
-                ))}
-                {finishedLoans.length > 0 && (
-                  <details className="group">
-                    <summary className="cursor-pointer list-none py-1 text-xs text-muted-foreground hover:text-foreground">
-                      <span className="group-open:hidden">▶ Yopilgan kreditlar ({finishedLoans.length})</span>
-                      <span className="hidden group-open:inline">▼ Yashirish</span>
-                    </summary>
-                    <div className="mt-2 space-y-2">
-                      {finishedLoans.map((l) => (
-                        <LoanCard key={l.id} loan={l}
-                          onEdit={() => { setEditingLoan(l); setLoanOpen(true); }}
-                          onDelete={() => removeLoan(l.id)}
-                          onTogglePaid={(instId) => toggleInstallment(l.id, instId)} />
-                      ))}
-                    </div>
-                  </details>
-                )}
-              </div>
-            )}
+        <div className="space-y-4" hidden={section !== "loans"}>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <SummaryCard
+              label="Qolgan kredit qarzi"
+              text={formatCurrencyMap(loansTotals)}
+              icon={Landmark}
+              colorClass="text-primary"
+              bgClass="bg-primary/10"
+            />
+            <SummaryCard
+              label="Yaqin to'lovlar (≤1 kun)"
+              text={dueSoonCount === 0 ? "Yo'q" : `${dueSoonCount} ta`}
+              icon={AlarmClock}
+              colorClass={dueSoonCount > 0 ? "text-warning-foreground" : "text-muted-foreground"}
+              bgClass={dueSoonCount > 0 ? "bg-warning/20" : "bg-muted"}
+            />
           </div>
-        )}
+
+          {loadingLoans ? (
+            <ListLoading items={4} />
+          ) : loans.length === 0 ? (
+            <EmptyState
+              icon={Landmark}
+              title="Kreditlar yo'q"
+              description="Bank yoki muassasaga oylik bo'lib to'laydigan kreditingizni qo'shing."
+              action={
+                <Button onClick={() => { setEditingLoan(null); setLoanOpen(true); }} className="rounded-xl">
+                  <Plus className="mr-1 h-4 w-4" /> Kredit qo'shish
+                </Button>
+              }
+            />
+          ) : (
+            <div className="space-y-2">
+              {activeLoans.map((l) => (
+                <LoanCard key={l.id} loan={l}
+                  onEdit={() => { setEditingLoan(l); setLoanOpen(true); }}
+                  onDelete={() => removeLoan(l.id)}
+                  onTogglePaid={(instId) => toggleInstallment(l.id, instId)} />
+              ))}
+              {finishedLoans.length > 0 && (
+                <details className="group">
+                  <summary className="cursor-pointer list-none py-1 text-xs text-muted-foreground hover:text-foreground">
+                    <span className="group-open:hidden">▶ Yopilgan kreditlar ({finishedLoans.length})</span>
+                    <span className="hidden group-open:inline">▼ Yashirish</span>
+                  </summary>
+                  <div className="mt-2 space-y-2">
+                    {finishedLoans.map((l) => (
+                      <LoanCard key={l.id} loan={l}
+                        onEdit={() => { setEditingLoan(l); setLoanOpen(true); }}
+                        onDelete={() => removeLoan(l.id)}
+                        onTogglePaid={(instId) => toggleInstallment(l.id, instId)} />
+                    ))}
+                  </div>
+                </details>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <DebtDialog open={open} onOpenChange={setOpen} debt={editing} initialDirection={initialDirection} onSave={save} />

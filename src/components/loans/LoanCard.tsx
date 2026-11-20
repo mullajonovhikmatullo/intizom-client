@@ -1,6 +1,6 @@
 import { Loan } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Pencil, Trash2, Check, AlertTriangle, Calendar, ChevronDown, CreditCard } from "lucide-react";
+import { Pencil, Trash2, Check, AlertTriangle, Calendar, ChevronDown, Landmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { format, parseISO, differenceInCalendarDays } from "date-fns";
@@ -41,7 +41,7 @@ export function LoanCard({ loan, onEdit, onDelete, onTogglePaid }: Props) {
 
   return (
     <div className={cn(
-      "group rounded-xl border bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft animate-fade-in",
+      "group rounded-xl border bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft",
       fullyPaid ? "border-border/40 opacity-60"
         : isOverdue ? "border-destructive/40"
         : isDueSoon ? "border-warning/50"
@@ -50,7 +50,7 @@ export function LoanCard({ loan, onEdit, onDelete, onTogglePaid }: Props) {
       {/* Row 1 */}
       <div className="flex items-center gap-2">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          <CreditCard className="h-4 w-4" />
+          <Landmark className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold leading-tight">{loan.title}</p>

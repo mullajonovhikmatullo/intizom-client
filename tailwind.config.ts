@@ -59,18 +59,40 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      // Every element that is rounded uses a single 0.5rem radius.
+      // For a deliberate exception use an arbitrary value, e.g. rounded-[9999px].
       borderRadius: {
+        sm: "var(--radius)",
+        DEFAULT: "var(--radius)",
+        md: "var(--radius)",
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 4px)",
-        sm: "calc(var(--radius) - 8px)",
+        xl: "var(--radius)",
+        "2xl": "var(--radius)",
+        "3xl": "var(--radius)",
+        full: "var(--radius)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
         "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
-        "fade-in": { "0%": { opacity: "0", transform: "translateY(8px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
-        "scale-in": { "0%": { opacity: "0", transform: "scale(0.96)" }, "100%": { opacity: "1", transform: "scale(1)" } },
-        "slide-up": { "0%": { opacity: "0", transform: "translateY(16px)" }, "100%": { opacity: "1", transform: "translateY(0)" } },
+        // Only the start frame is given so the animation ends on the element's own
+        // opacity/transform (e.g. opacity-60) instead of snapping to it afterwards.
+        "fade-in": { "0%": { opacity: "0", transform: "translateY(8px)" } },
+        "scale-in": { "0%": { opacity: "0", transform: "scale(0.96)" } },
+        "slide-up": { "0%": { opacity: "0", transform: "translateY(16px)" } },
         "pop": { "0%": { transform: "scale(1)" }, "50%": { transform: "scale(1.15)" }, "100%": { transform: "scale(1)" } },
+        // Modal open/close: backdrop and panel share duration and easing so they move as one.
+        // On open the panel turns opaque early, so the page behind never shows through it;
+        // on close panel and backdrop hold, then dissolve together. Motion spans the full duration.
+        "overlay-in": { from: { opacity: "0" } },
+        "overlay-out": { "30%": { opacity: "1" }, "100%": { opacity: "0" } },
+        "dialog-in": {
+          "0%": { opacity: "0", transform: "translateY(16px) scale(0.96)" },
+          "18%": { opacity: "1" },
+        },
+        "dialog-out": {
+          "30%": { opacity: "1" },
+          "100%": { opacity: "0", transform: "translateY(10px) scale(0.97)" },
+        },
         "shimmer": { "0%": { backgroundPosition: "-200% 0" }, "100%": { backgroundPosition: "200% 0" } },
       },
       animation: {
@@ -80,6 +102,10 @@ export default {
         "scale-in": "scale-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "slide-up": "slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
         "pop": "pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "overlay-in": "overlay-in 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+        "overlay-out": "overlay-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards",
+        "dialog-in": "dialog-in 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+        "dialog-out": "dialog-out 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards",
       },
     },
   },

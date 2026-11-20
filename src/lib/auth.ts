@@ -57,10 +57,17 @@ export async function updateProfile(updates: Partial<Omit<User, "id">>): Promise
   return user;
 }
 
-export async function login(email: string, password: string): Promise<User> {
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  await apiRequest<void>("/auth/me/password", {
+    method: "PATCH",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
+export async function login(email: string, password: string, rememberMe = false): Promise<User> {
   const session = await apiRequest<AuthResponse>("/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, rememberMe }),
   });
   saveAuthSession(session);
   return session.user;

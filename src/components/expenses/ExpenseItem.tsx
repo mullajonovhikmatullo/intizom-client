@@ -22,7 +22,7 @@ export function ExpenseItem({ expense, onEdit, onDelete }: Props) {
   const Icon = meta.icon;
 
   return (
-    <div className="group flex items-center gap-2.5 rounded-xl border border-border/70 bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft animate-fade-in">
+    <div className="group flex items-center gap-2.5 rounded-xl border border-border/70 bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: `${meta.color}20`, color: meta.color }}>
         <Icon className="h-4 w-4" />
       </div>

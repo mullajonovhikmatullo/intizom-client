@@ -95,6 +95,8 @@ export function PaymentDialog({ open, onOpenChange, debt, remaining, onSave }: P
                 return isUsd ? Number(val).toFixed(2) : Number(val).toLocaleString();
               }}
               parser={(val) => (val ? Number(val.replace(isUsd ? /[^\d.]/g : /[^\d]/g, "")) : 0)}
+              inputMode={isUsd ? "decimal" : "numeric"}
+              pattern={isUsd ? "[0-9.]*" : "[0-9]*"}
               placeholder={isUsd ? "0.00" : "0"}
               addonBefore={isUsd ? "$" : undefined}
               addonAfter={!isUsd ? "so'm" : undefined}

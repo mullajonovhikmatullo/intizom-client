@@ -1,5 +1,5 @@
 import { Debt, DebtPayment } from "@/lib/types";
-import { Pencil, Trash2, Check, Clock, FileText, CreditCard, ChevronDown } from "lucide-react";
+import { Pencil, Trash2, Check, CalendarClock, StickyNote, Banknote, ChevronDown, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -43,7 +43,7 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
   return (
     <>
       <div className={cn(
-        "group rounded-xl border bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft animate-fade-in",
+        "group rounded-xl border bg-card px-3 py-2 shadow-sm transition-base hover:shadow-soft",
         debt.isPaid ? "border-border/40 opacity-60" : isOverdue ? "border-destructive/40" : "border-border/70"
       )}>
         {/* Row 1: checkbox · name · actions */}
@@ -65,8 +65,13 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
           </button>
 
           {/* Name — takes all remaining space */}
-          <p className="min-w-0 flex-1 truncate text-sm font-semibold leading-tight">
-            {isBorrowed ? "📥 " : "📤 "}{debt.person}
+          <p className="flex min-w-0 flex-1 items-center gap-1 text-sm font-semibold leading-tight">
+            {isBorrowed ? (
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-destructive" aria-label="Men oldim" />
+            ) : (
+              <ArrowDownLeft className="h-3.5 w-3.5 shrink-0 text-success" aria-label="Men berdim" />
+            )}
+            <span className="truncate">{debt.person}</span>
           </p>
 
           {/* Actions — always visible, fixed right */}
@@ -78,7 +83,7 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
                 onClick={() => setPayOpen(true)}
                 aria-label="To'lov qo'shish"
               >
-                <CreditCard className="h-3.5 w-3.5" />
+                <Banknote className="h-3.5 w-3.5" />
               </Button>
             )}
             <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={onEdit}>
@@ -116,7 +121,7 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
           )}
           {debt.dueDate && (
             <span className={cn("inline-flex min-w-0 items-center gap-1 text-[11px]", isOverdue ? "font-semibold text-destructive" : "text-muted-foreground")}>
-              <Clock className="h-2.5 w-2.5 shrink-0" />
+              <CalendarClock className="h-2.5 w-2.5 shrink-0" />
               <span className="truncate">
                 {format(parseISO(debt.dueDate), "dd.MM.yyyy")}
                 {isOverdue && " · Muddati o'tdi!"}
@@ -125,7 +130,7 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
           )}
           {debt.note && (
             <span className="inline-flex min-w-0 max-w-full items-center gap-1 text-[11px] text-muted-foreground">
-              <FileText className="h-2.5 w-2.5 shrink-0" />
+              <StickyNote className="h-2.5 w-2.5 shrink-0" />
               <span className="truncate">{debt.note}</span>
             </span>
           )}

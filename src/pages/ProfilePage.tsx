@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Mail, User as UserIcon, Pencil, Check, X } from "lucide-react";
+import { Mail, User as UserIcon, Pencil, KeyRound } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { StatsContent } from "@/components/StatsContent";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ export default function ProfilePage() {
   const [email, setEmail] = useState(user?.email ?? "");
   const [displayUser, setDisplayUser] = useState(user);
   const [saving, setSaving] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   if (!user || !displayUser) return <Navigate to="/login" replace />;
 
@@ -117,12 +119,10 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   <div className="flex gap-2 pt-1">
-                    <Button size="sm" onClick={handleSave} className="gap-1" disabled={saving}>
-                      <Check className="h-4 w-4" />
+                    <Button size="sm" onClick={handleSave} disabled={saving}>
                       {saving ? "Saqlanmoqda..." : "Saqlash"}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={handleCancel} className="gap-1" disabled={saving}>
-                      <X className="h-4 w-4" />
+                    <Button size="sm" variant="outline" onClick={handleCancel} disabled={saving}>
                       Bekor qilish
                     </Button>
                   </div>
@@ -137,15 +137,26 @@ export default function ProfilePage() {
                     <Mail className="h-4 w-4 shrink-0" />
                     <span className="truncate">{displayUser.email}</span>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setIsEditing(true)}
-                    className="mt-3 gap-1"
-                  >
-                    <Pencil className="h-4 w-4" />
-                    Tahrirlash
-                  </Button>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setIsEditing(true)}
+                      className="gap-1"
+                    >
+                      <Pencil className="h-4 w-4" />
+                      Tahrirlash
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setPasswordDialogOpen(true)}
+                      className="gap-1"
+                    >
+                      <KeyRound className="h-4 w-4" />
+                      Parolni o'zgartirish
+                    </Button>
+                  </div>
                 </>
               )}
             </div>
@@ -154,6 +165,7 @@ export default function ProfilePage() {
 
         <StatsContent />
       </div>
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </>
   );
 }

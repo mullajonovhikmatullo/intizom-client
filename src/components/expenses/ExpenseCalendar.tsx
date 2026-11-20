@@ -112,7 +112,7 @@ export function ExpenseCalendar({ expenses, selected, onSelect }: Props) {
               {/* Sana + summa birgalikda markazlangan */}
               <div className="flex flex-col items-center justify-center gap-0.5 h-full w-full">
                 <div className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-[4px] text-sm leading-none transition-colors",
+                  "flex h-7 w-7 items-center justify-center rounded-lg text-sm leading-none transition-colors",
                   isSelected && "gradient-primary text-primary-foreground",
                   !isSelected && isToday && "border border-primary",
                   !isSelected && !isToday && inMonth && !isFuture && "hover:bg-muted",

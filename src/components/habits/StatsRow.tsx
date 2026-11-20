@@ -1,4 +1,4 @@
-import { Flame, Sunrise, TrendingUp } from "lucide-react";
+import { CalendarRange, Flame, Sunrise } from "lucide-react";
 
 interface Props {
   streak: number;
@@ -8,9 +8,9 @@ interface Props {
 
 export function StatsRow({ streak, todayPct, weekPct }: Props) {
   const items = [
-    { label: "Ketma-ketlik", value: `${streak}🔥`, icon: Flame, gradient: "gradient-warm" },
+    { label: "Ketma-ketlik", value: `${streak}`, icon: Flame, gradient: "gradient-warm" },
     { label: "Bugun", value: `${todayPct}%`, icon: Sunrise, gradient: "gradient-primary" },
-    { label: "Bu hafta", value: `${weekPct}%`, icon: TrendingUp, gradient: "gradient-success" },
+    { label: "Bu hafta", value: `${weekPct}%`, icon: CalendarRange, gradient: "gradient-success" },
   ];
   return (
     <div className="grid grid-cols-3 gap-2">

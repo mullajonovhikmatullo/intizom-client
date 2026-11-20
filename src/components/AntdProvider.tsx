@@ -2,13 +2,14 @@ import { ConfigProvider, theme as antdTheme } from "antd";
 import { useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
 
-// Ensure every numeric input opens the numeric keyboard on mobile and
-// blocks alphabetic characters at the browser level.
+// Ensure every numeric input opens a digits-only keyboard on mobile.
+// An input that sets its own inputMode (e.g. "decimal" for USD cents) keeps it.
 function useNumericInputEnforcement() {
   useEffect(() => {
     const apply = (el: HTMLInputElement) => {
-      el.setAttribute("inputmode", "decimal");
-      el.setAttribute("pattern", "[0-9.,]*");
+      if (!el.hasAttribute("inputmode")) el.setAttribute("inputmode", "numeric");
+      // iOS shows the pure number pad only for this exact pattern.
+      el.setAttribute("pattern", el.getAttribute("inputmode") === "decimal" ? "[0-9.]*" : "[0-9]*");
       el.setAttribute("autocomplete", "off");
     };
     const scan = (root: ParentNode) => {
@@ -64,7 +65,10 @@ export function AntdProvider({ children }: { children: React.ReactNode }) {
           colorBgElevated: bg,
           colorBorder: border,
           colorBorderSecondary: border,
-          borderRadius: 14,
+          borderRadius: 8,
+          borderRadiusLG: 8,
+          borderRadiusSM: 8,
+          borderRadiusXS: 8,
           fontFamily:
             "Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
         },

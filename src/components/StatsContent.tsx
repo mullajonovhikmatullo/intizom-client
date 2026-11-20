@@ -12,7 +12,7 @@ import { dateKey, lastNDays, monthRange, weekRange } from "@/lib/date";
 import { categoryMeta, CATEGORIES } from "@/lib/categories";
 import { isToday, isThisWeek, isThisMonth, parseISO, format } from "date-fns";
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Flame, LucideIcon, PiggyBank, Sunrise, TrendingUp, Trophy } from "lucide-react";
+import { CalendarDays, CalendarRange, Flame, LucideIcon, Sunrise, Wallet } from "lucide-react";
 import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading, StatGridLoading } from "@/components/DataLoading";
 import { fetchExpenses } from "@/lib/expenses";
@@ -143,8 +143,8 @@ export function StatsContent() {
           <div className="grid grid-cols-2 gap-3">
             <BigStat label="Ketma-ketlik" value={`${habitMetrics.streak} kun`} icon={Flame} gradient="gradient-warm" />
             <BigStat label="Bugun" value={`${habitMetrics.today}%`} icon={Sunrise} gradient="gradient-success" />
-            <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={TrendingUp} gradient="gradient-primary" />
-            <BigStat label="Bu oy" value={`${habitMetrics.month}%`} icon={Trophy} gradient="gradient-warm" />
+            <BigStat label="Bu hafta" value={`${habitMetrics.week}%`} icon={CalendarRange} gradient="gradient-primary" />
+            <BigStat label="Bu oy" value={`${habitMetrics.month}%`} icon={CalendarDays} gradient="gradient-warm" />
           </div>
         )}
 
@@ -166,10 +166,10 @@ export function StatsContent() {
                   <YAxis tickLine={false} axisLine={false} fontSize={11} stroke="hsl(var(--muted-foreground))" domain={[0, 100]} />
                   <Tooltip
                     cursor={{ fill: "hsl(var(--muted))" }}
-                    contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 12 }}
+                    contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
                     formatter={(v: number, _n, p) => [`${v}%`, p.payload.date]}
                   />
-                  <Bar dataKey="pct" radius={[6, 6, 0, 0]} fill="hsl(var(--primary))" />
+                  <Bar dataKey="pct" radius={[8, 8, 0, 0]} fill="hsl(var(--primary))" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -195,7 +195,7 @@ export function StatsContent() {
                     </div>
                   </div>
                   <div className="text-sm font-bold tabular-nums">
-                    {streak} 🔥
+                    {streak}
                   </div>
                 </li>
               ))}
@@ -235,7 +235,7 @@ export function StatsContent() {
           </div>
 
           {byCategory.length === 0 ? (
-            <EmptyState icon={PiggyBank} title="Xarajat ma'lumotlari yo'q" description="Diagrammalarni ochish uchun xarajatlarni kiriting." />
+            <EmptyState icon={Wallet} title="Xarajat ma'lumotlari yo'q" description="Diagrammalarni ochish uchun xarajatlarni kiriting." />
           ) : (
             <div className="grid grid-cols-1 items-center gap-3 sm:grid-cols-2">
               <div className="h-44">
@@ -247,7 +247,7 @@ export function StatsContent() {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 12, fontSize: 12 }}
+                      contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
                       formatter={(v: number) => `${Math.round(v).toLocaleString()}`}
                     />
                   </PieChart>
@@ -303,7 +303,7 @@ function SpendStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card p-2.5 shadow-sm">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <PiggyBank className="h-4 w-4" />
+        <Wallet className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-bold leading-tight tabular-nums">{value}</div>

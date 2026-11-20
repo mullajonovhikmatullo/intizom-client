@@ -1,4 +1,5 @@
-import { Moon, Sun, Download, LogOut, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+import { Moon, Sun, LogOut, User as UserIcon } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -11,12 +12,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useTheme } from "./ThemeProvider";
 import { getCurrentUser, logout } from "@/lib/auth";
 import { toast } from "sonner";
-import { fetchHabitLogs, fetchHabits } from "@/lib/habits";
-import { fetchExpenses } from "@/lib/expenses";
-import { isSessionExpiredError } from "@/lib/api";
 
 interface Props {
   title: string;
@@ -37,39 +45,12 @@ export function AppHeader({ title, subtitle }: Props) {
   const { settings, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const user = getCurrentUser();
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     toast.success("Hisobdan chiqildi");
     navigate("/login", { replace: true });
-  };
-
-  const exportData = async () => {
-    try {
-      const [habits, habitLogs, expenses] = await Promise.all([
-        fetchHabits(),
-        fetchHabitLogs(),
-        fetchExpenses(),
-      ]);
-      const data = {
-        habits,
-        habitLogs,
-        expenses,
-        exportedAt: new Date().toISOString(),
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `tracker-export-${new Date().toISOString().slice(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success("Ma'lumotlar eksport qilindi");
-    } catch (error) {
-      if (!isSessionExpiredError(error)) {
-        toast.error("Eksport muvaffaqiyatsiz");
-      }
-    }
   };
 
   return (
@@ -83,9 +64,6 @@ export function AppHeader({ title, subtitle }: Props) {
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <Button size="icon" variant="ghost" onClick={exportData} aria-label="Ma'lumotlarni eksport qilish" className="rounded-full">
-            <Download className="h-5 w-5" />
-          </Button>
           <Button size="icon" variant="ghost" onClick={toggleTheme} aria-label="Mavzuni o'zgartirish" className="rounded-full">
             {settings.theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
@@ -93,11 +71,11 @@ export function AppHeader({ title, subtitle }: Props) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-2 rounded-full pl-1 pr-2 py-1 hover:bg-accent transition-base tap-scale"
+                  className="flex items-center gap-2 rounded-[9999px] pl-1 pr-2 py-1 outline-none transition-shadow duration-200 ease-out hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.35)] data-[state=open]:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.5),0_0_0_3px_hsl(var(--primary)/0.12)] focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label="Foydalanuvchi menyusi"
                 >
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                  <Avatar className="h-8 w-8 rounded-[9999px]">
+                    <AvatarFallback className="rounded-[9999px] bg-primary/10 text-primary text-xs font-semibold">
                       {initials(user.name)}
                     </AvatarFallback>
                   </Avatar>
@@ -106,7 +84,7 @@ export function AppHeader({ title, subtitle }: Props) {
                   </span>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 duration-200 ease-out">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span className="truncate text-sm font-semibold">{user.name}</span>
@@ -118,7 +96,7 @@ export function AppHeader({ title, subtitle }: Props) {
                   <UserIcon className="mr-2 h-4 w-4" />
                   Profil
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem onSelect={() => setLogoutConfirmOpen(true)}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Chiqish
                 </DropdownMenuItem>
@@ -127,6 +105,26 @@ export function AppHeader({ title, subtitle }: Props) {
           )}
         </div>
       </div>
+
+      <AlertDialog open={logoutConfirmOpen} onOpenChange={setLogoutConfirmOpen}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Hisobdan chiqmoqchimisiz?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Qayta foydalanish uchun email va parolingiz bilan yana kirishingiz kerak bo'ladi.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Bekor qilish</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Chiqish
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   );
 }

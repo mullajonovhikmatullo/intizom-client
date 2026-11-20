@@ -1,5 +1,5 @@
 import { Habit, HabitLogs } from "@/lib/types";
-import { Check, Clock, Pencil, Trash2, Flame, Target, Pin, PinOff } from "lucide-react";
+import { Check, Clock, Pencil, Trash2, Trophy, Target, Pin, PinOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -19,9 +19,12 @@ interface Props {
   onEdit: () => void;
   onDelete: () => void;
   onTogglePin: () => void;
+  /** Optional drag handle rendered at the start of the card (see SortableHabitList). */
+  dragHandle?: React.ReactNode;
+  isDragging?: boolean;
 }
 
-export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelete, onTogglePin }: Props) {
+export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelete, onTogglePin, dragHandle, isDragging }: Props) {
   const [confirm, setConfirm] = useState(false);
   const key = dateKey(selectedDate);
   const isFuture = key > todayKey();
@@ -31,10 +34,12 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
 
   return (
     <div className={cn(
-      "group rounded-xl border bg-card px-3 py-2.5 shadow-sm transition-base hover:shadow-soft animate-fade-in",
-      habit.pinned ? "border-primary/40 ring-1 ring-primary/20" : "border-border/70"
+      "group rounded-xl border bg-card px-3 py-2.5 shadow-sm transition-base hover:shadow-soft",
+      habit.pinned ? "border-primary/40 ring-1 ring-primary/20" : "border-border/70",
+      isDragging && "shadow-elev"
     )}>
       <div className="flex items-center gap-2.5">
+        {dragHandle}
         <button
           onClick={onToggle}
           disabled={isFuture}
@@ -60,7 +65,7 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
               <div className="mt-0.5 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[11px] text-muted-foreground">
                 {habit.time && <span className="inline-flex items-center gap-1"><Clock className="h-2.5 w-2.5" />{habit.time}</span>}
                 <span className="inline-flex items-center gap-1"><Target className="h-2.5 w-2.5" />{completed}/{habit.targetDays}</span>
-                {pct >= 100 && <span className="inline-flex items-center gap-1 font-semibold text-success"><Flame className="h-2.5 w-2.5" />Maqsad!</span>}
+                {pct >= 100 && <span className="inline-flex items-center gap-1 font-semibold text-success"><Trophy className="h-2.5 w-2.5" />Maqsad!</span>}
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-0.5 opacity-60 transition-base group-hover:opacity-100">

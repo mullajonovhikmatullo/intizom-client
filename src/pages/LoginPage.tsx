@@ -1,9 +1,11 @@
 import { FormEvent, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ApiError } from "@/lib/api";
 import { isAuthenticated, login } from "@/lib/auth";
@@ -13,6 +15,8 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   if (isAuthenticated()) {
@@ -23,7 +27,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const user = await login(email.trim(), password);
+      const user = await login(email.trim(), password, rememberMe);
       toast.success(`Xush kelibsiz, ${user.name}!`);
       navigate("/", { replace: true });
     } catch (error) {
@@ -66,15 +70,37 @@ export default function LoginPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Parol</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={showPassword ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="remember-me"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
+              <Label htmlFor="remember-me" className="cursor-pointer text-sm font-normal">
+                Meni eslab qol
+              </Label>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Kirilmoqda..." : "Kirish"}
