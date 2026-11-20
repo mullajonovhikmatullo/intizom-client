@@ -4,7 +4,7 @@ import { StatsContent } from "@/components/StatsContent";
 export default function StatsPage() {
   return (
     <>
-      <AppHeader title="Statistika" subtitle="Yutuqlaringizga umumiy ko'rinish" />
+      <AppHeader title="Statistika" />
       <div className="px-4 pt-4">
         <StatsContent />
       </div>

@@ -67,8 +67,8 @@ export function StatGridLoading({ items = 4 }: { items?: number }) {
 /** Placeholder for a segmented tab bar, so the list below doesn't shift when it appears. */
 export function TabsLoading({ className }: { className?: string }) {
   return (
-    <div className={cn("loading-enter h-10 rounded-xl bg-muted p-1", className)} aria-hidden>
-      <div className="h-full w-1/2 rounded-lg bg-background/60" />
+    <div className={cn("loading-enter h-10 rounded-xl bg-muted p-1 shadow-inset dark:bg-background", className)} aria-hidden>
+      <div className="h-full w-1/2 rounded-lg bg-background/60 dark:bg-muted/60" />
     </div>
   );
 }

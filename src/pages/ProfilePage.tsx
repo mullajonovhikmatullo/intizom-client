@@ -1,26 +1,22 @@
-import { useState } from "react";
-import { Mail, User as UserIcon, Pencil, KeyRound } from "lucide-react";
+import { useRef, useState } from "react";
+import { Camera, ImageUp, Loader2, Mail, User as UserIcon, Pencil, KeyRound, Trash2 } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
 import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
-import { StatsContent } from "@/components/StatsContent";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError, isSessionExpiredError } from "@/lib/api";
-import { getCurrentUser, updateProfile } from "@/lib/auth";
+import { getCurrentUser, removeAvatar, updateProfile, uploadAvatar } from "@/lib/auth";
+import { prepareAvatarImage } from "@/lib/image";
 import { toast } from "sonner";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 export default function ProfilePage() {
   const user = getCurrentUser();
@@ -30,8 +26,66 @@ export default function ProfilePage() {
   const [displayUser, setDisplayUser] = useState(user);
   const [saving, setSaving] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user || !displayUser) return <Navigate to="/login" replace />;
+
+  const pickImage = () => fileInputRef.current?.click();
+
+  const handleImageChosen = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = ""; // allow choosing the same file again
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Faqat rasm faylini tanlang");
+      return;
+    }
+
+    setAvatarBusy(true);
+    try {
+      const { blob, name: fileName } = await prepareAvatarImage(file);
+      const updated = await uploadAvatar(blob, fileName);
+      setDisplayUser(updated);
+      toast.success("Profil rasmi yangilandi");
+    } catch (error) {
+      if (isSessionExpiredError(error)) return;
+      if (error instanceof ApiError && error.code === "FILE_TOO_LARGE") {
+        toast.error("Rasm hajmi 5 MB dan oshmasligi kerak");
+      } else if (error instanceof ApiError && (error.code === "INVALID_IMAGE" || error.code === "UNSUPPORTED_IMAGE_TYPE")) {
+        toast.error("Bu rasm formatini o'qib bo'lmadi. JPEG yoki PNG tanlang");
+      } else {
+        toast.error("Rasmni yuklab bo'lmadi");
+      }
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    setAvatarBusy(true);
+    try {
+      const updated = await removeAvatar();
+      setDisplayUser(updated);
+      toast.success("Profil rasmi o'chirildi");
+    } catch (error) {
+      if (!isSessionExpiredError(error)) toast.error("Rasmni o'chirib bo'lmadi");
+    } finally {
+      setAvatarBusy(false);
+    }
+  };
+
+  const cameraButton = (
+    <button
+      type="button"
+      onClick={displayUser.avatarUrl ? undefined : pickImage}
+      disabled={avatarBusy}
+      aria-label={displayUser.avatarUrl ? "Profil rasmini o'zgartirish" : "Profil rasmini yuklash"}
+      className="absolute -bottom-0.5 -right-0.5 flex h-7 w-7 items-center justify-center rounded-[9999px] border-2 border-card bg-primary text-primary-foreground shadow-sm transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
+    >
+      <Camera className="h-3.5 w-3.5" />
+    </button>
+  );
 
   const handleSave = async () => {
     const trimmedName = name.trim();
@@ -75,15 +129,42 @@ export default function ProfilePage() {
 
   return (
     <>
-      <AppHeader title="Profil" subtitle="Hisob ma'lumotlari va statistika" />
+      <AppHeader title="Profil" />
       <div className="space-y-6 px-4 pt-4">
         <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
           <div className="flex items-start gap-4">
-            <Avatar className="h-16 w-16">
-              <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
-                {initials(displayUser.name)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative shrink-0">
+              <UserAvatar user={displayUser} className="h-20 w-20" fallbackClassName="text-xl" />
+              {avatarBusy && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-[9999px] bg-background/60">
+                  <Loader2 className="h-6 w-6 animate-spin text-foreground" aria-label="Yuklanmoqda" />
+                </div>
+              )}
+              {displayUser.avatarUrl ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>{cameraButton}</DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuItem onSelect={pickImage}>
+                      <ImageUp className="mr-2 h-4 w-4" />
+                      Yangi rasm yuklash
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onSelect={handleRemoveImage} className="text-destructive focus:text-destructive">
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Rasmni o'chirish
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                cameraButton
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                className="hidden"
+                onChange={handleImageChosen}
+              />
+            </div>
             <div className="min-w-0 flex-1">
               {isEditing ? (
                 <div className="space-y-3">
@@ -163,7 +244,6 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <StatsContent />
       </div>
       <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </>

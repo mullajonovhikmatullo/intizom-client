@@ -323,13 +323,13 @@ export default function DebtPage() {
 
   return (
     <>
-      <AppHeader title="Qarzlar" subtitle="Moliyaviy majburiyatlar" />
+      <AppHeader title="Qarzlar" />
 
       <div className="space-y-4 px-4 pt-4">
         {/* Top-level segmented switch (Section) */}
-        <div className="relative grid grid-cols-2 rounded-2xl bg-muted p-1 text-sm font-semibold">
+        <div className="relative grid grid-cols-2 rounded-2xl bg-muted p-1 text-sm font-semibold shadow-inset dark:bg-background">
           <span
-            className="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-background shadow-sm transition-transform duration-300"
+            className="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-background shadow-tab transition-transform duration-300 dark:bg-muted"
             style={{ transform: section === "loans" ? "translateX(100%)" : "translateX(0)" }}
             aria-hidden
           />

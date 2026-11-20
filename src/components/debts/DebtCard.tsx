@@ -55,13 +55,13 @@ export function DebtCard({ debt, onEdit, onDelete, onTogglePaid, onAddPayment }:
             className={cn(
               "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 transition-bounce tap-scale",
               debt.isPaid
-                ? "border-success bg-success text-success-foreground"
+                ? "border-success/70 bg-background text-success shadow-inset"
                 : isBorrowed
-                ? "border-destructive/50 bg-background hover:border-destructive"
-                : "border-success/50 bg-background hover:border-success"
+                ? "border-destructive/50 bg-background shadow-inset hover:border-destructive"
+                : "border-success/50 bg-background shadow-inset hover:border-success"
             )}
           >
-            {debt.isPaid && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+            {debt.isPaid && <Check className="h-[1.1rem] w-[1.1rem] animate-pop" strokeWidth={3} />}
           </button>
 
           {/* Name — takes all remaining space */}

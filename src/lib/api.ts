@@ -78,13 +78,20 @@ function throwApiError(status: number, error?: ApiErrorBody["error"]): never {
   throw new ApiError(status, code, error?.message ?? "Request failed", error?.details);
 }
 
+/** Absolute URL for a path the API returns (e.g. an avatar's `/avatars/...`). */
+export function apiAssetUrl(path: string) {
+  return `${API_BASE_URL}${path}`;
+}
+
 export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const token = localStorage.getItem(TOKEN_KEY);
+  // Let the browser set the multipart boundary for file uploads.
+  const isFormData = typeof FormData !== "undefined" && init.body instanceof FormData;
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...init.headers,
     },

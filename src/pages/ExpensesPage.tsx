@@ -189,7 +189,7 @@ export default function ExpensesPage() {
 
   return (
     <>
-      <AppHeader title="Xarajatlar" subtitle="Har bir tiyinni kuzating" />
+      <AppHeader title="Xarajatlar" />
 
       <div className="space-y-5 px-4 pt-4">
         {/* Compact summary */}

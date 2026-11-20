@@ -150,13 +150,13 @@ export function LoanCard({ loan, onEdit, onDelete, onTogglePaid }: Props) {
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-bounce tap-scale",
                     inst.paid
-                      ? "border-success bg-success text-success-foreground"
-                      : over ? "border-destructive/60 bg-background hover:border-destructive"
-                      : soon ? "border-warning/60 bg-background hover:border-warning"
-                      : "border-border bg-background hover:border-foreground"
+                      ? "border-success/70 bg-background text-success shadow-inset"
+                      : over ? "border-destructive/60 bg-background shadow-inset hover:border-destructive"
+                      : soon ? "border-warning/60 bg-background shadow-inset hover:border-warning"
+                      : "border-border bg-background shadow-inset hover:border-foreground"
                   )}
                 >
-                  {inst.paid && <Check className="h-3 w-3" strokeWidth={3} />}
+                  {inst.paid && <Check className="h-3.5 w-3.5 animate-pop" strokeWidth={3} />}
                 </button>
                 <span className="w-6 shrink-0 text-muted-foreground tabular-nums">#{inst.index}</span>
                 <span className={cn(

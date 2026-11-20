@@ -48,11 +48,11 @@ export function HabitCard({ habit, logs, selectedDate, onToggle, onEdit, onDelet
             "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 transition-bounce tap-scale",
             isFuture && "opacity-50 cursor-not-allowed",
             checked
-              ? "border-success bg-success text-success-foreground shadow-glow"
-              : "border-border bg-background hover:border-primary"
+              ? "border-success/70 bg-background text-success shadow-inset"
+              : "border-border bg-background shadow-inset hover:border-primary"
           )}
         >
-          {checked && <Check className="h-3.5 w-3.5 animate-pop" strokeWidth={3} />}
+          {checked && <Check className="h-[1.1rem] w-[1.1rem] animate-pop" strokeWidth={3} />}
         </button>
 
         <div className="min-w-0 flex-1">

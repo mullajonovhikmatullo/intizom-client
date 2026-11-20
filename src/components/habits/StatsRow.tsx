@@ -6,6 +6,9 @@ interface Props {
   weekPct: number;
 }
 
+/** The primary gradient is silver in dark mode, so its icon takes the primary foreground. */
+const iconColor = (gradient: string) => (gradient === "gradient-primary" ? "text-primary-foreground" : "text-white");
+
 export function StatsRow({ streak, todayPct, weekPct }: Props) {
   const items = [
     { label: "Ketma-ketlik", value: `${streak}`, icon: Flame, gradient: "gradient-warm" },
@@ -19,7 +22,7 @@ export function StatsRow({ streak, todayPct, weekPct }: Props) {
           key={label}
           className="flex min-w-0 items-center gap-1 rounded-xl border border-border/70 bg-card px-1.5 py-2 shadow-sm sm:gap-2 sm:px-3"
         >
-          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md sm:h-8 sm:w-8 sm:rounded-lg ${gradient} text-white`}>
+          <div className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md sm:h-8 sm:w-8 sm:rounded-lg ${gradient} ${iconColor(gradient)}`}>
             <Icon className="h-3.5 w-3.5 sm:h-[1.125rem] sm:w-[1.125rem]" />
           </div>
           <div className="min-w-0">

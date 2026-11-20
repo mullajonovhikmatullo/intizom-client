@@ -160,7 +160,7 @@ export default function TodoPage() {
 
   return (
     <>
-      <AppHeader title="Rejalar" subtitle="Maqsad va vazifalar" />
+      <AppHeader title="Rejalar" />
 
       <div className="space-y-4 px-4 pt-4">
         <div className="grid grid-cols-2 gap-3">

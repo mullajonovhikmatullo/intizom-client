@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Moon, Sun, LogOut, User as UserIcon } from "lucide-react";
+import { ChartColumnBig, Moon, Sun, LogOut, User as UserIcon } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,28 +23,18 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useTheme } from "./ThemeProvider";
-import { getCurrentUser, logout } from "@/lib/auth";
+import { logout, useCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 
 interface Props {
+  /** Page name, announced to screen readers only; the header shows just the logo. */
   title: string;
-  subtitle?: string;
 }
 
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((p) => p[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
-export function AppHeader({ title, subtitle }: Props) {
+export function AppHeader({ title }: Props) {
   const { settings, toggleTheme } = useTheme();
   const navigate = useNavigate();
-  const user = getCurrentUser();
+  const user = useCurrentUser();
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   const handleLogout = () => {
@@ -56,12 +46,9 @@ export function AppHeader({ title, subtitle }: Props) {
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-xl safe-top">
       <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+        <div className="flex min-w-0 items-center">
           <BrandLogo />
-          <div className="min-w-0 border-l border-border/60 pl-2.5 sm:pl-3">
-            <h1 className="truncate text-base font-semibold tracking-tight">{title}</h1>
-            {subtitle && <p className="truncate text-xs text-muted-foreground">{subtitle}</p>}
-          </div>
+          <h1 className="sr-only">{title}</h1>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <Button size="icon" variant="ghost" onClick={toggleTheme} aria-label="Mavzuni o'zgartirish" className="rounded-full">
@@ -71,14 +58,10 @@ export function AppHeader({ title, subtitle }: Props) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-2 rounded-[9999px] pl-1 pr-2 py-1 outline-none transition-shadow duration-200 ease-out hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.35)] data-[state=open]:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.5),0_0_0_3px_hsl(var(--primary)/0.12)] focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex items-center gap-2 rounded-[9999px] pl-1 pr-2 py-1 outline-none transition-shadow duration-200 ease-out hover:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.35)] data-[state=open]:shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.5),0_0_0_3px_hsl(var(--primary)/0.12)] dark:hover:shadow-[inset_0_0_0_1px_hsl(var(--foreground)/0.45)] dark:data-[state=open]:shadow-[inset_0_0_0_1px_hsl(var(--foreground)/0.6)] focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label="Foydalanuvchi menyusi"
                 >
-                  <Avatar className="h-8 w-8 rounded-[9999px]">
-                    <AvatarFallback className="rounded-[9999px] bg-primary/10 text-primary text-xs font-semibold">
-                      {initials(user.name)}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar user={user} className="h-8 w-8" fallbackClassName="text-xs" />
                   <span className="hidden sm:inline max-w-[120px] truncate text-sm font-medium">
                     {user.name}
                   </span>
@@ -95,6 +78,10 @@ export function AppHeader({ title, subtitle }: Props) {
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <UserIcon className="mr-2 h-4 w-4" />
                   Profil
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/stats")}>
+                  <ChartColumnBig className="mr-2 h-4 w-4" />
+                  Statistika
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setLogoutConfirmOpen(true)}>
                   <LogOut className="mr-2 h-4 w-4" />

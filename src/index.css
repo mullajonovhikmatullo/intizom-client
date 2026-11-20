@@ -3,25 +3,27 @@
 @tailwind utilities;
 
 @layer base {
+  /* Light mode follows the logo too: white and neutral greys with a near-black
+     primary (the mark's black tile). Status colors keep their hue. */
   :root {
-    --background: 240 20% 99%;
-    --foreground: 240 15% 12%;
+    --background: 0 0% 99%;
+    --foreground: 240 6% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 15% 12%;
+    --card-foreground: 240 6% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 15% 12%;
+    --popover-foreground: 240 6% 10%;
 
-    --primary: 250 75% 60%;
+    --primary: 240 6% 10%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 260 90% 72%;
+    --primary-glow: 240 4% 40%;
 
-    --secondary: 240 15% 96%;
-    --secondary-foreground: 240 15% 18%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
 
-    --muted: 240 15% 96%;
-    --muted-foreground: 240 8% 46%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
 
     --accent: 158 70% 45%;
     --accent-foreground: 0 0% 100%;
@@ -35,22 +37,25 @@
     --destructive: 0 78% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 15% 92%;
-    --input: 240 15% 92%;
-    --ring: 250 75% 60%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 240 5% 35%;
 
     --radius: 0.5rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(250 75% 60%), hsl(280 80% 65%));
+    --gradient-primary: linear-gradient(135deg, hsl(240 6% 10%), hsl(240 4% 36%));
     --gradient-success: linear-gradient(135deg, hsl(158 70% 45%), hsl(180 65% 50%));
     --gradient-warm: linear-gradient(135deg, hsl(15 90% 62%), hsl(38 95% 60%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(240 20% 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(250 75% 60% / 0.12), hsl(280 80% 65% / 0.06));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(240 5% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(240 6% 10% / 0.06), hsl(240 6% 10% / 0.02));
 
-    --shadow-sm: 0 1px 2px hsl(240 15% 12% / 0.04);
-    --shadow-md: 0 4px 16px -4px hsl(240 15% 12% / 0.08);
-    --shadow-lg: 0 12px 32px -8px hsl(240 15% 12% / 0.12);
-    --shadow-glow: 0 8px 32px -8px hsl(250 75% 60% / 0.4);
+    --shadow-sm: 0 1px 2px hsl(240 6% 10% / 0.05);
+    --shadow-md: 0 4px 16px -4px hsl(240 6% 10% / 0.1);
+    --shadow-lg: 0 12px 32px -8px hsl(240 6% 10% / 0.14);
+    --shadow-glow: 0 8px 24px -10px hsl(240 6% 10% / 0.45);
+    --shadow-raised: 0 1px 2px 0 hsl(240 6% 10% / 0.05);
+    --shadow-inset: 0 0 #0000;
+    --shadow-tab: 0 1px 2px 0 hsl(240 6% 10% / 0.05);
 
     --transition-base: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     /* Bounce easing overshoots (y > 1), so it is applied to transform only;
@@ -63,7 +68,7 @@
       box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
       opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --chart-1: 250 75% 60%;
+    --chart-1: 240 5% 26%;
     --chart-2: 158 70% 45%;
     --chart-3: 38 95% 60%;
     --chart-4: 15 90% 62%;
@@ -76,7 +81,7 @@
   .dark {
     color-scheme: dark;
 
-    --background: 0 0% 4%;
+    --background: 0 0% 5%;
     --foreground: 0 0% 95%;
 
     --card: 0 0% 8%;
@@ -107,19 +112,40 @@
     --destructive: 0 78% 65%;
     --destructive-foreground: 0 0% 5%;
 
-    --border: 0 0% 16%;
-    --input: 0 0% 16%;
+    --border: 0 0% 13%;
+    --input: 0 0% 15%;
     --ring: 240 5% 70%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(240 5% 96%), hsl(240 4% 66%));
+    --gradient-primary: linear-gradient(135deg, hsl(240 5% 84%), hsl(240 4% 56%));
     --gradient-success: linear-gradient(135deg, hsl(158 70% 50%), hsl(180 65% 55%));
     --gradient-warm: linear-gradient(135deg, hsl(15 90% 65%), hsl(38 95% 65%));
     --gradient-card: linear-gradient(180deg, hsl(0 0% 9%), hsl(0 0% 7%));
     --gradient-hero: linear-gradient(135deg, hsl(0 0% 100% / 0.08), hsl(0 0% 100% / 0.02));
 
-    --shadow-sm: 0 1px 2px hsl(0 0% 0% / 0.4);
-    --shadow-md: 0 4px 16px -4px hsl(0 0% 0% / 0.6);
-    --shadow-lg: 0 12px 32px -8px hsl(0 0% 0% / 0.7);
+    /* Soft neumorphism: a faint rim light from the top-left and a long, soft
+       shadow to the bottom-right make surfaces read as extruded from the page;
+       recessed controls get the inverse. Kept low-contrast on purpose. */
+    --shadow-raised:
+      inset 1px 1px 0 0 hsl(0 0% 100% / 0.035),
+      -4px -4px 10px -3px hsl(0 0% 100% / 0.018),
+      6px 8px 16px -4px hsl(0 0% 0% / 0.8);
+    --shadow-inset:
+      inset 2px 2px 6px 0 hsl(0 0% 0% / 0.6),
+      inset -1px -1px 1px 0 hsl(0 0% 100% / 0.03);
+    /* Small controls inside a recessed track (active tab): lift straight up,
+       so they don't look pushed down by a long diagonal shadow. */
+    --shadow-tab:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.04),
+      0 1px 2px 0 hsl(0 0% 0% / 0.55),
+      0 3px 8px -2px hsl(0 0% 0% / 0.5);
+    --shadow-sm: var(--shadow-raised);
+    --shadow-md:
+      inset 1px 1px 0 0 hsl(0 0% 100% / 0.045),
+      -4px -4px 10px -2px hsl(0 0% 100% / 0.022),
+      7px 9px 20px -4px hsl(0 0% 0% / 0.8);
+    --shadow-lg:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.04),
+      0 18px 36px -10px hsl(0 0% 0% / 0.85);
     --shadow-glow: 0 8px 28px -10px hsl(0 0% 100% / 0.25);
 
     --chart-1: 240 5% 82%;
@@ -203,6 +229,15 @@
   }
 
   /* Set on <html> for the duration of a theme switch (see ThemeProvider). */
+/* Ant Design fields sit next to our inputs in dialogs, so recess them the same
+   way in dark mode. Focused fields keep antd's own focus ring. */
+.dark .ant-input-number:not(.ant-input-number-focused),
+.dark .ant-input-number-group-addon,
+.dark .ant-picker:not(.ant-picker-focused),
+.dark .ant-select:not(.ant-select-focused) .ant-select-selector {
+  box-shadow: var(--shadow-inset) !important;
+}
+
   .theme-switching,
   .theme-switching *,
   .theme-switching *::before,

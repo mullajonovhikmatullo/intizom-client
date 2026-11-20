@@ -288,7 +288,7 @@ export function StatsContent() {
 function BigStat({ label, value, icon: Icon, gradient }: { label: string; value: string; icon: LucideIcon; gradient: string }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-border/70 bg-card p-2.5 shadow-sm">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${gradient} text-white`}>
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${gradient} ${gradient === "gradient-primary" ? "text-primary-foreground" : "text-white"}`}>
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">

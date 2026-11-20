@@ -28,7 +28,6 @@ import { SortableHabitList } from "@/components/habits/SortableHabitList";
 import { HabitDialog } from "@/components/habits/HabitDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { ChartLoading, ListLoading } from "@/components/DataLoading";
-import { format } from "date-fns";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ApiError, isSessionExpiredError } from "@/lib/api";
@@ -215,11 +214,10 @@ export default function HabitsPage() {
 
   const toggle = (id: string) => toggleAt(id, dateKey(selected));
 
-  const subtitle = format(selected, "EEEE, MMM d");
 
   return (
     <>
-      <AppHeader title="Odatlar" subtitle={subtitle} />
+      <AppHeader title="Odatlar" />
 
       <div className="space-y-5 px-4 pt-4">
         <Tabs defaultValue="strip" className="w-full">

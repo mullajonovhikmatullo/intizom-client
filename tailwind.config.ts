@@ -12,6 +12,12 @@ export default {
       screens: { "2xl": "1400px" },
     },
     extend: {
+      boxShadow: {
+        // Theme-driven: plain soft shadow in light mode, neumorphic in dark mode.
+        sm: "var(--shadow-raised)",
+        inset: "var(--shadow-inset)",
+        tab: "var(--shadow-tab)",
+      },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
